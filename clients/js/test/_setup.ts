@@ -8,6 +8,7 @@ import {
   appendTransactionMessageInstruction,
   appendTransactionMessageInstructions,
   assertIsSendableTransaction,
+  assertIsTransactionWithBlockhashLifetime,
   BASE_ACCOUNT_SIZE,
   BaseTransactionMessage,
   Commitment,
@@ -111,6 +112,7 @@ export const signAndSendTransaction = async (
     await signTransactionMessageWithSigners(transactionMessage);
   const signature = getSignatureFromTransaction(signedTransaction);
   assertIsSendableTransaction(signedTransaction);
+  assertIsTransactionWithBlockhashLifetime(signedTransaction);
   await sendAndConfirmTransactionFactory(client)(signedTransaction, {
     commitment,
   });
