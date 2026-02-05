@@ -98,6 +98,7 @@ export type MetadataArgs = {
   data: ReadonlyUint8Array;
 };
 
+/** Gets the encoder for {@link MetadataArgs} account data. */
 export function getMetadataEncoder(): Encoder<MetadataArgs> {
   return transformEncoder(
     getStructEncoder([
@@ -124,6 +125,7 @@ export function getMetadataEncoder(): Encoder<MetadataArgs> {
   );
 }
 
+/** Gets the decoder for {@link Metadata} account data. */
 export function getMetadataDecoder(): Decoder<Metadata> {
   return getStructDecoder([
     ['discriminator', getAccountDiscriminatorDecoder()],
@@ -147,6 +149,7 @@ export function getMetadataDecoder(): Decoder<Metadata> {
   ]);
 }
 
+/** Gets the codec for {@link Metadata} account data. */
 export function getMetadataCodec(): Codec<MetadataArgs, Metadata> {
   return combineCodec(getMetadataEncoder(), getMetadataDecoder());
 }

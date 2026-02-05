@@ -68,6 +68,7 @@ export type BufferArgs = {
   data: ReadonlyUint8Array;
 };
 
+/** Gets the encoder for {@link BufferArgs} account data. */
 export function getBufferEncoder(): Encoder<BufferArgs> {
   return transformEncoder(
     getStructEncoder([
@@ -94,6 +95,7 @@ export function getBufferEncoder(): Encoder<BufferArgs> {
   );
 }
 
+/** Gets the decoder for {@link Buffer} account data. */
 export function getBufferDecoder(): Decoder<Buffer> {
   return getStructDecoder([
     ['discriminator', getAccountDiscriminatorDecoder()],
@@ -117,6 +119,7 @@ export function getBufferDecoder(): Decoder<Buffer> {
   ]);
 }
 
+/** Gets the codec for {@link Buffer} account data. */
 export function getBufferCodec(): Codec<BufferArgs, Buffer> {
   return combineCodec(getBufferEncoder(), getBufferDecoder());
 }

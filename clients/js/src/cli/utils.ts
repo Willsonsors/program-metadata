@@ -6,14 +6,13 @@ import {
   Account,
   Address,
   address,
-  BaseTransactionMessage,
   Commitment,
   compileTransaction,
   createKeyPairSignerFromBytes,
   createNoopSigner,
   createSolanaRpc,
   createSolanaRpcSubscriptions,
-  getAllSingleTransactionPlans,
+  flattenTransactionPlan,
   getTransactionEncoder,
   InstructionPlan,
   MessageSigner,
@@ -23,6 +22,7 @@ import {
   setTransactionMessageLifetimeUsingBlockhash,
   SolanaRpcApi,
   SolanaRpcSubscriptionsApi,
+  TransactionMessage,
   TransactionMessageWithFeePayer,
   TransactionPlan,
   TransactionPlanExecutor,
@@ -120,7 +120,7 @@ async function exportTransactionPlan(
   client: Pick<Client, 'rpc'>,
   options: GlobalOptions
 ) {
-  const singleTransactions = getAllSingleTransactionPlans(transactionPlan);
+  const singleTransactions = flattenTransactionPlan(transactionPlan);
   const transactionEncoder = getTransactionEncoder();
 
   logExports(singleTransactions.length, options);
@@ -146,7 +146,7 @@ async function exportTransactionPlan(
 }
 
 function removeComputeUnitLimitInstruction<
-  TTransactionMessage extends BaseTransactionMessage &
+  TTransactionMessage extends TransactionMessage &
     TransactionMessageWithFeePayer,
 >(message: TTransactionMessage): TTransactionMessage {
   const index = getSetComputeUnitLimitInstructionIndex(message);
@@ -158,7 +158,7 @@ function removeComputeUnitLimitInstruction<
 }
 
 export function getSetComputeUnitLimitInstructionIndex(
-  transactionMessage: BaseTransactionMessage
+  transactionMessage: TransactionMessage
 ) {
   return transactionMessage.instructions.findIndex((ix) => {
     return (

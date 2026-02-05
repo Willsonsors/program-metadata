@@ -44,9 +44,8 @@ export type TrimInstruction<
   TAccountProgram extends string | AccountMeta<string> = string,
   TAccountProgramData extends string | AccountMeta<string> = string,
   TAccountDestination extends string | AccountMeta<string> = string,
-  TAccountRent extends
-    | string
-    | AccountMeta<string> = 'SysvarRent111111111111111111111111111111111',
+  TAccountRent extends string | AccountMeta<string> =
+    'SysvarRent111111111111111111111111111111111',
   TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &

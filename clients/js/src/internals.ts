@@ -22,6 +22,7 @@ import {
   setTransactionMessageLifetimeUsingBlockhash,
   signTransactionMessageWithSigners,
   SimulateTransactionApi,
+  TransactionPlanExecutorConfig,
   TransactionPlanner,
   TransactionSigner,
 } from '@solana/kit';
@@ -88,24 +89,30 @@ export function createDefaultTransactionPlannerAndExecutor(input: {
   });
 
   const executor = createTransactionPlanExecutor({
-    executeTransactionMessage: limitFunction(async (message, config) => {
-      const { value: latestBlockhash } = await input.rpc
-        .getLatestBlockhash()
-        .send();
-      const transaction = await pipe(
-        setTransactionMessageLifetimeUsingBlockhash(latestBlockhash, message),
-        async (m) => await estimateAndSetCULimit(m, config),
-        async (m) => await signTransactionMessageWithSigners(await m, config)
-      );
-      assertIsSendableTransaction(transaction);
-      assertIsTransactionWithBlockhashLifetime(transaction);
-      await sendAndConfirmTransaction(transaction, {
-        ...config,
-        commitment: 'confirmed',
-      });
-      return { transaction };
-    }, input.concurrency ?? 5),
-  });
+    executeTransactionMessage: limitFunction(
+      async (context, message, config) => {
+        const { value: latestBlockhash } = await input.rpc
+          .getLatestBlockhash()
+          .send();
+        const transaction = await pipe(
+          setTransactionMessageLifetimeUsingBlockhash(latestBlockhash, message),
+          (m) => (context.message = m),
+          async (m) => await estimateAndSetCULimit(m, config),
+          async (m) => (context.message = await m),
+          async (m) => await signTransactionMessageWithSigners(await m, config)
+        );
+        context.transaction = transaction;
+        assertIsSendableTransaction(transaction);
+        assertIsTransactionWithBlockhashLifetime(transaction);
+        await sendAndConfirmTransaction(transaction, {
+          ...config,
+          commitment: 'confirmed',
+        });
+        return transaction;
+      },
+      input.concurrency ?? 5
+    ),
+  } as TransactionPlanExecutorConfig);
 
   return { planner, executor };
 }

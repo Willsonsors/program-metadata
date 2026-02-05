@@ -54,9 +54,8 @@ export type AllocateInstruction<
   TAccountAuthority extends string | AccountMeta<string> = string,
   TAccountProgram extends string | AccountMeta<string> = string,
   TAccountProgramData extends string | AccountMeta<string> = string,
-  TAccountSystem extends
-    | string
-    | AccountMeta<string> = '11111111111111111111111111111111',
+  TAccountSystem extends string | AccountMeta<string> =
+    '11111111111111111111111111111111',
   TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &

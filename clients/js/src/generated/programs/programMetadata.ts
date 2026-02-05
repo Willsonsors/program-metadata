@@ -7,12 +7,24 @@
  */
 
 import {
+  assertIsInstructionWithAccounts,
   containsBytes,
   getU8Encoder,
   type Address,
+  type Instruction,
+  type InstructionWithData,
   type ReadonlyUint8Array,
 } from '@solana/kit';
 import {
+  parseAllocateInstruction,
+  parseCloseInstruction,
+  parseExtendInstruction,
+  parseInitializeInstruction,
+  parseSetAuthorityInstruction,
+  parseSetDataInstruction,
+  parseSetImmutableInstruction,
+  parseTrimInstruction,
+  parseWriteInstruction,
   type ParsedAllocateInstruction,
   type ParsedCloseInstruction,
   type ParsedExtendInstruction,
@@ -110,3 +122,78 @@ export type ParsedProgramMetadataInstruction<
   | ({
       instructionType: ProgramMetadataInstruction.Extend;
     } & ParsedExtendInstruction<TProgram>);
+
+export function parseProgramMetadataInstruction<TProgram extends string>(
+  instruction: Instruction<TProgram> & InstructionWithData<ReadonlyUint8Array>
+): ParsedProgramMetadataInstruction<TProgram> {
+  const instructionType = identifyProgramMetadataInstruction(instruction);
+  switch (instructionType) {
+    case ProgramMetadataInstruction.Write: {
+      assertIsInstructionWithAccounts(instruction);
+      return {
+        instructionType: ProgramMetadataInstruction.Write,
+        ...parseWriteInstruction(instruction),
+      };
+    }
+    case ProgramMetadataInstruction.Initialize: {
+      assertIsInstructionWithAccounts(instruction);
+      return {
+        instructionType: ProgramMetadataInstruction.Initialize,
+        ...parseInitializeInstruction(instruction),
+      };
+    }
+    case ProgramMetadataInstruction.SetAuthority: {
+      assertIsInstructionWithAccounts(instruction);
+      return {
+        instructionType: ProgramMetadataInstruction.SetAuthority,
+        ...parseSetAuthorityInstruction(instruction),
+      };
+    }
+    case ProgramMetadataInstruction.SetData: {
+      assertIsInstructionWithAccounts(instruction);
+      return {
+        instructionType: ProgramMetadataInstruction.SetData,
+        ...parseSetDataInstruction(instruction),
+      };
+    }
+    case ProgramMetadataInstruction.SetImmutable: {
+      assertIsInstructionWithAccounts(instruction);
+      return {
+        instructionType: ProgramMetadataInstruction.SetImmutable,
+        ...parseSetImmutableInstruction(instruction),
+      };
+    }
+    case ProgramMetadataInstruction.Trim: {
+      assertIsInstructionWithAccounts(instruction);
+      return {
+        instructionType: ProgramMetadataInstruction.Trim,
+        ...parseTrimInstruction(instruction),
+      };
+    }
+    case ProgramMetadataInstruction.Close: {
+      assertIsInstructionWithAccounts(instruction);
+      return {
+        instructionType: ProgramMetadataInstruction.Close,
+        ...parseCloseInstruction(instruction),
+      };
+    }
+    case ProgramMetadataInstruction.Allocate: {
+      assertIsInstructionWithAccounts(instruction);
+      return {
+        instructionType: ProgramMetadataInstruction.Allocate,
+        ...parseAllocateInstruction(instruction),
+      };
+    }
+    case ProgramMetadataInstruction.Extend: {
+      assertIsInstructionWithAccounts(instruction);
+      return {
+        instructionType: ProgramMetadataInstruction.Extend,
+        ...parseExtendInstruction(instruction),
+      };
+    }
+    default:
+      throw new Error(
+        `Unrecognized instruction type: ${instructionType as string}`
+      );
+  }
+}
