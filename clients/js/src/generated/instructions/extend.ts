@@ -7,28 +7,28 @@
  */
 
 import {
-  combineCodec,
-  getStructDecoder,
-  getStructEncoder,
-  getU16Decoder,
-  getU16Encoder,
-  getU8Decoder,
-  getU8Encoder,
-  transformEncoder,
-  type AccountMeta,
-  type AccountSignerMeta,
-  type Address,
-  type FixedSizeCodec,
-  type FixedSizeDecoder,
-  type FixedSizeEncoder,
-  type Instruction,
-  type InstructionWithAccounts,
-  type InstructionWithData,
-  type ReadonlyAccount,
-  type ReadonlySignerAccount,
-  type ReadonlyUint8Array,
-  type TransactionSigner,
-  type WritableAccount,
+    combineCodec,
+    getStructDecoder,
+    getStructEncoder,
+    getU16Decoder,
+    getU16Encoder,
+    getU8Decoder,
+    getU8Encoder,
+    transformEncoder,
+    type AccountMeta,
+    type AccountSignerMeta,
+    type Address,
+    type FixedSizeCodec,
+    type FixedSizeDecoder,
+    type FixedSizeEncoder,
+    type Instruction,
+    type InstructionWithAccounts,
+    type InstructionWithData,
+    type ReadonlyAccount,
+    type ReadonlySignerAccount,
+    type ReadonlyUint8Array,
+    type TransactionSigner,
+    type WritableAccount,
 } from '@solana/kit';
 import { PROGRAM_METADATA_PROGRAM_ADDRESS } from '../programs';
 import { getAccountMetaFactory, type ResolvedAccount } from '../shared';
@@ -36,203 +36,162 @@ import { getAccountMetaFactory, type ResolvedAccount } from '../shared';
 export const EXTEND_DISCRIMINATOR = 8;
 
 export function getExtendDiscriminatorBytes() {
-  return getU8Encoder().encode(EXTEND_DISCRIMINATOR);
+    return getU8Encoder().encode(EXTEND_DISCRIMINATOR);
 }
 
 export type ExtendInstruction<
-  TProgram extends string = typeof PROGRAM_METADATA_PROGRAM_ADDRESS,
-  TAccountAccount extends string | AccountMeta<string> = string,
-  TAccountAuthority extends string | AccountMeta<string> = string,
-  TAccountProgram extends string | AccountMeta<string> = string,
-  TAccountProgramData extends string | AccountMeta<string> = string,
-  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
+    TProgram extends string = typeof PROGRAM_METADATA_PROGRAM_ADDRESS,
+    TAccountAccount extends string | AccountMeta<string> = string,
+    TAccountAuthority extends string | AccountMeta<string> = string,
+    TAccountProgram extends string | AccountMeta<string> = string,
+    TAccountProgramData extends string | AccountMeta<string> = string,
+    TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
-  InstructionWithData<ReadonlyUint8Array> &
-  InstructionWithAccounts<
-    [
-      TAccountAccount extends string
-        ? WritableAccount<TAccountAccount>
-        : TAccountAccount,
-      TAccountAuthority extends string
-        ? ReadonlySignerAccount<TAccountAuthority> &
-            AccountSignerMeta<TAccountAuthority>
-        : TAccountAuthority,
-      TAccountProgram extends string
-        ? ReadonlyAccount<TAccountProgram>
-        : TAccountProgram,
-      TAccountProgramData extends string
-        ? ReadonlyAccount<TAccountProgramData>
-        : TAccountProgramData,
-      ...TRemainingAccounts,
-    ]
-  >;
+    InstructionWithData<ReadonlyUint8Array> &
+    InstructionWithAccounts<
+        [
+            TAccountAccount extends string ? WritableAccount<TAccountAccount> : TAccountAccount,
+            TAccountAuthority extends string
+                ? ReadonlySignerAccount<TAccountAuthority> & AccountSignerMeta<TAccountAuthority>
+                : TAccountAuthority,
+            TAccountProgram extends string ? ReadonlyAccount<TAccountProgram> : TAccountProgram,
+            TAccountProgramData extends string ? ReadonlyAccount<TAccountProgramData> : TAccountProgramData,
+            ...TRemainingAccounts,
+        ]
+    >;
 
 export type ExtendInstructionData = {
-  discriminator: number;
-  /** Length (in bytes) to add to the account size. */
-  length: number;
+    discriminator: number;
+    /** Length (in bytes) to add to the account size. */
+    length: number;
 };
 
 export type ExtendInstructionDataArgs = {
-  /** Length (in bytes) to add to the account size. */
-  length: number;
+    /** Length (in bytes) to add to the account size. */
+    length: number;
 };
 
 export function getExtendInstructionDataEncoder(): FixedSizeEncoder<ExtendInstructionDataArgs> {
-  return transformEncoder(
-    getStructEncoder([
-      ['discriminator', getU8Encoder()],
-      ['length', getU16Encoder()],
-    ]),
-    (value) => ({ ...value, discriminator: EXTEND_DISCRIMINATOR })
-  );
+    return transformEncoder(
+        getStructEncoder([
+            ['discriminator', getU8Encoder()],
+            ['length', getU16Encoder()],
+        ]),
+        value => ({ ...value, discriminator: EXTEND_DISCRIMINATOR }),
+    );
 }
 
 export function getExtendInstructionDataDecoder(): FixedSizeDecoder<ExtendInstructionData> {
-  return getStructDecoder([
-    ['discriminator', getU8Decoder()],
-    ['length', getU16Decoder()],
-  ]);
+    return getStructDecoder([
+        ['discriminator', getU8Decoder()],
+        ['length', getU16Decoder()],
+    ]);
 }
 
-export function getExtendInstructionDataCodec(): FixedSizeCodec<
-  ExtendInstructionDataArgs,
-  ExtendInstructionData
-> {
-  return combineCodec(
-    getExtendInstructionDataEncoder(),
-    getExtendInstructionDataDecoder()
-  );
+export function getExtendInstructionDataCodec(): FixedSizeCodec<ExtendInstructionDataArgs, ExtendInstructionData> {
+    return combineCodec(getExtendInstructionDataEncoder(), getExtendInstructionDataDecoder());
 }
 
 export type ExtendInput<
-  TAccountAccount extends string = string,
-  TAccountAuthority extends string = string,
-  TAccountProgram extends string = string,
-  TAccountProgramData extends string = string,
+    TAccountAccount extends string = string,
+    TAccountAuthority extends string = string,
+    TAccountProgram extends string = string,
+    TAccountProgramData extends string = string,
 > = {
-  /** Buffer or metadata account. */
-  account: Address<TAccountAccount>;
-  /** Authority account. */
-  authority: TransactionSigner<TAccountAuthority>;
-  /** Program account. */
-  program?: Address<TAccountProgram>;
-  /** Program data account. */
-  programData?: Address<TAccountProgramData>;
-  length: ExtendInstructionDataArgs['length'];
+    /** Buffer or metadata account. */
+    account: Address<TAccountAccount>;
+    /** Authority account. */
+    authority: TransactionSigner<TAccountAuthority>;
+    /** Program account. */
+    program?: Address<TAccountProgram>;
+    /** Program data account. */
+    programData?: Address<TAccountProgramData>;
+    length: ExtendInstructionDataArgs['length'];
 };
 
 export function getExtendInstruction<
-  TAccountAccount extends string,
-  TAccountAuthority extends string,
-  TAccountProgram extends string,
-  TAccountProgramData extends string,
-  TProgramAddress extends Address = typeof PROGRAM_METADATA_PROGRAM_ADDRESS,
+    TAccountAccount extends string,
+    TAccountAuthority extends string,
+    TAccountProgram extends string,
+    TAccountProgramData extends string,
+    TProgramAddress extends Address = typeof PROGRAM_METADATA_PROGRAM_ADDRESS,
 >(
-  input: ExtendInput<
-    TAccountAccount,
-    TAccountAuthority,
-    TAccountProgram,
-    TAccountProgramData
-  >,
-  config?: { programAddress?: TProgramAddress }
-): ExtendInstruction<
-  TProgramAddress,
-  TAccountAccount,
-  TAccountAuthority,
-  TAccountProgram,
-  TAccountProgramData
-> {
-  // Program address.
-  const programAddress =
-    config?.programAddress ?? PROGRAM_METADATA_PROGRAM_ADDRESS;
+    input: ExtendInput<TAccountAccount, TAccountAuthority, TAccountProgram, TAccountProgramData>,
+    config?: { programAddress?: TProgramAddress },
+): ExtendInstruction<TProgramAddress, TAccountAccount, TAccountAuthority, TAccountProgram, TAccountProgramData> {
+    // Program address.
+    const programAddress = config?.programAddress ?? PROGRAM_METADATA_PROGRAM_ADDRESS;
 
-  // Original accounts.
-  const originalAccounts = {
-    account: { value: input.account ?? null, isWritable: true },
-    authority: { value: input.authority ?? null, isWritable: false },
-    program: { value: input.program ?? null, isWritable: false },
-    programData: { value: input.programData ?? null, isWritable: false },
-  };
-  const accounts = originalAccounts as Record<
-    keyof typeof originalAccounts,
-    ResolvedAccount
-  >;
+    // Original accounts.
+    const originalAccounts = {
+        account: { value: input.account ?? null, isWritable: true },
+        authority: { value: input.authority ?? null, isWritable: false },
+        program: { value: input.program ?? null, isWritable: false },
+        programData: { value: input.programData ?? null, isWritable: false },
+    };
+    const accounts = originalAccounts as Record<keyof typeof originalAccounts, ResolvedAccount>;
 
-  // Original args.
-  const args = { ...input };
+    // Original args.
+    const args = { ...input };
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
-  return Object.freeze({
-    accounts: [
-      getAccountMeta(accounts.account),
-      getAccountMeta(accounts.authority),
-      getAccountMeta(accounts.program),
-      getAccountMeta(accounts.programData),
-    ],
-    data: getExtendInstructionDataEncoder().encode(
-      args as ExtendInstructionDataArgs
-    ),
-    programAddress,
-  } as ExtendInstruction<
-    TProgramAddress,
-    TAccountAccount,
-    TAccountAuthority,
-    TAccountProgram,
-    TAccountProgramData
-  >);
+    const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
+    return Object.freeze({
+        accounts: [
+            getAccountMeta(accounts.account),
+            getAccountMeta(accounts.authority),
+            getAccountMeta(accounts.program),
+            getAccountMeta(accounts.programData),
+        ],
+        data: getExtendInstructionDataEncoder().encode(args as ExtendInstructionDataArgs),
+        programAddress,
+    } as ExtendInstruction<TProgramAddress, TAccountAccount, TAccountAuthority, TAccountProgram, TAccountProgramData>);
 }
 
 export type ParsedExtendInstruction<
-  TProgram extends string = typeof PROGRAM_METADATA_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
+    TProgram extends string = typeof PROGRAM_METADATA_PROGRAM_ADDRESS,
+    TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
-  programAddress: Address<TProgram>;
-  accounts: {
-    /** Buffer or metadata account. */
-    account: TAccountMetas[0];
-    /** Authority account. */
-    authority: TAccountMetas[1];
-    /** Program account. */
-    program?: TAccountMetas[2] | undefined;
-    /** Program data account. */
-    programData?: TAccountMetas[3] | undefined;
-  };
-  data: ExtendInstructionData;
+    programAddress: Address<TProgram>;
+    accounts: {
+        /** Buffer or metadata account. */
+        account: TAccountMetas[0];
+        /** Authority account. */
+        authority: TAccountMetas[1];
+        /** Program account. */
+        program?: TAccountMetas[2] | undefined;
+        /** Program data account. */
+        programData?: TAccountMetas[3] | undefined;
+    };
+    data: ExtendInstructionData;
 };
 
-export function parseExtendInstruction<
-  TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[],
->(
-  instruction: Instruction<TProgram> &
-    InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+export function parseExtendInstruction<TProgram extends string, TAccountMetas extends readonly AccountMeta[]>(
+    instruction: Instruction<TProgram> &
+        InstructionWithAccounts<TAccountMetas> &
+        InstructionWithData<ReadonlyUint8Array>,
 ): ParsedExtendInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 4) {
-    // TODO: Coded error.
-    throw new Error('Not enough accounts');
-  }
-  let accountIndex = 0;
-  const getNextAccount = () => {
-    const accountMeta = (instruction.accounts as TAccountMetas)[accountIndex]!;
-    accountIndex += 1;
-    return accountMeta;
-  };
-  const getNextOptionalAccount = () => {
-    const accountMeta = getNextAccount();
-    return accountMeta.address === PROGRAM_METADATA_PROGRAM_ADDRESS
-      ? undefined
-      : accountMeta;
-  };
-  return {
-    programAddress: instruction.programAddress,
-    accounts: {
-      account: getNextAccount(),
-      authority: getNextAccount(),
-      program: getNextOptionalAccount(),
-      programData: getNextOptionalAccount(),
-    },
-    data: getExtendInstructionDataDecoder().decode(instruction.data),
-  };
+    if (instruction.accounts.length < 4) {
+        // TODO: Coded error.
+        throw new Error('Not enough accounts');
+    }
+    let accountIndex = 0;
+    const getNextAccount = () => {
+        const accountMeta = (instruction.accounts as TAccountMetas)[accountIndex]!;
+        accountIndex += 1;
+        return accountMeta;
+    };
+    const getNextOptionalAccount = () => {
+        const accountMeta = getNextAccount();
+        return accountMeta.address === PROGRAM_METADATA_PROGRAM_ADDRESS ? undefined : accountMeta;
+    };
+    return {
+        programAddress: instruction.programAddress,
+        accounts: {
+            account: getNextAccount(),
+            authority: getNextAccount(),
+            program: getNextOptionalAccount(),
+            programData: getNextOptionalAccount(),
+        },
+        data: getExtendInstructionDataDecoder().decode(instruction.data),
+    };
 }

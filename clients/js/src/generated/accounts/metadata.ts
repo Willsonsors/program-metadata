@@ -7,222 +7,207 @@
  */
 
 import {
-  assertAccountExists,
-  assertAccountsExist,
-  combineCodec,
-  decodeAccount,
-  fetchEncodedAccount,
-  fetchEncodedAccounts,
-  getAddressDecoder,
-  getAddressEncoder,
-  getBooleanDecoder,
-  getBooleanEncoder,
-  getBytesDecoder,
-  getBytesEncoder,
-  getOptionDecoder,
-  getOptionEncoder,
-  getStructDecoder,
-  getStructEncoder,
-  getU32Decoder,
-  getU32Encoder,
-  padRightDecoder,
-  padRightEncoder,
-  transformEncoder,
-  type Account,
-  type Address,
-  type Codec,
-  type Decoder,
-  type EncodedAccount,
-  type Encoder,
-  type FetchAccountConfig,
-  type FetchAccountsConfig,
-  type MaybeAccount,
-  type MaybeEncodedAccount,
-  type Option,
-  type OptionOrNullable,
-  type ReadonlyUint8Array,
+    assertAccountExists,
+    assertAccountsExist,
+    combineCodec,
+    decodeAccount,
+    fetchEncodedAccount,
+    fetchEncodedAccounts,
+    getAddressDecoder,
+    getAddressEncoder,
+    getBooleanDecoder,
+    getBooleanEncoder,
+    getBytesDecoder,
+    getBytesEncoder,
+    getOptionDecoder,
+    getOptionEncoder,
+    getStructDecoder,
+    getStructEncoder,
+    getU32Decoder,
+    getU32Encoder,
+    padRightDecoder,
+    padRightEncoder,
+    transformEncoder,
+    type Account,
+    type Address,
+    type Codec,
+    type Decoder,
+    type EncodedAccount,
+    type Encoder,
+    type FetchAccountConfig,
+    type FetchAccountsConfig,
+    type MaybeAccount,
+    type MaybeEncodedAccount,
+    type Option,
+    type OptionOrNullable,
+    type ReadonlyUint8Array,
 } from '@solana/kit';
 import { findMetadataPda, MetadataSeeds } from '../pdas';
 import {
-  AccountDiscriminator,
-  getAccountDiscriminatorDecoder,
-  getAccountDiscriminatorEncoder,
-  getCompressionDecoder,
-  getCompressionEncoder,
-  getDataSourceDecoder,
-  getDataSourceEncoder,
-  getEncodingDecoder,
-  getEncodingEncoder,
-  getFormatDecoder,
-  getFormatEncoder,
-  getSeedDecoder,
-  getSeedEncoder,
-  type Compression,
-  type CompressionArgs,
-  type DataSource,
-  type DataSourceArgs,
-  type Encoding,
-  type EncodingArgs,
-  type Format,
-  type FormatArgs,
-  type Seed,
-  type SeedArgs,
+    AccountDiscriminator,
+    getAccountDiscriminatorDecoder,
+    getAccountDiscriminatorEncoder,
+    getCompressionDecoder,
+    getCompressionEncoder,
+    getDataSourceDecoder,
+    getDataSourceEncoder,
+    getEncodingDecoder,
+    getEncodingEncoder,
+    getFormatDecoder,
+    getFormatEncoder,
+    getSeedDecoder,
+    getSeedEncoder,
+    type Compression,
+    type CompressionArgs,
+    type DataSource,
+    type DataSourceArgs,
+    type Encoding,
+    type EncodingArgs,
+    type Format,
+    type FormatArgs,
+    type Seed,
+    type SeedArgs,
 } from '../types';
 
 export type Metadata = {
-  discriminator: AccountDiscriminator;
-  program: Address;
-  authority: Option<Address>;
-  mutable: boolean;
-  canonical: boolean;
-  seed: Seed;
-  encoding: Encoding;
-  compression: Compression;
-  format: Format;
-  dataSource: DataSource;
-  dataLength: number;
-  data: ReadonlyUint8Array;
+    discriminator: AccountDiscriminator;
+    program: Address;
+    authority: Option<Address>;
+    mutable: boolean;
+    canonical: boolean;
+    seed: Seed;
+    encoding: Encoding;
+    compression: Compression;
+    format: Format;
+    dataSource: DataSource;
+    dataLength: number;
+    data: ReadonlyUint8Array;
 };
 
 export type MetadataArgs = {
-  program: Address;
-  authority: OptionOrNullable<Address>;
-  mutable: boolean;
-  canonical: boolean;
-  seed: SeedArgs;
-  encoding: EncodingArgs;
-  compression: CompressionArgs;
-  format: FormatArgs;
-  dataSource: DataSourceArgs;
-  dataLength: number;
-  data: ReadonlyUint8Array;
+    program: Address;
+    authority: OptionOrNullable<Address>;
+    mutable: boolean;
+    canonical: boolean;
+    seed: SeedArgs;
+    encoding: EncodingArgs;
+    compression: CompressionArgs;
+    format: FormatArgs;
+    dataSource: DataSourceArgs;
+    dataLength: number;
+    data: ReadonlyUint8Array;
 };
 
 /** Gets the encoder for {@link MetadataArgs} account data. */
 export function getMetadataEncoder(): Encoder<MetadataArgs> {
-  return transformEncoder(
-    getStructEncoder([
-      ['discriminator', getAccountDiscriminatorEncoder()],
-      ['program', getAddressEncoder()],
-      [
-        'authority',
-        getOptionEncoder(getAddressEncoder(), {
-          prefix: null,
-          noneValue: 'zeroes',
-        }),
-      ],
-      ['mutable', getBooleanEncoder()],
-      ['canonical', getBooleanEncoder()],
-      ['seed', getSeedEncoder()],
-      ['encoding', getEncodingEncoder()],
-      ['compression', getCompressionEncoder()],
-      ['format', getFormatEncoder()],
-      ['dataSource', getDataSourceEncoder()],
-      ['dataLength', padRightEncoder(getU32Encoder(), 5)],
-      ['data', getBytesEncoder()],
-    ]),
-    (value) => ({ ...value, discriminator: AccountDiscriminator.Metadata })
-  );
+    return transformEncoder(
+        getStructEncoder([
+            ['discriminator', getAccountDiscriminatorEncoder()],
+            ['program', getAddressEncoder()],
+            ['authority', getOptionEncoder(getAddressEncoder(), { prefix: null, noneValue: 'zeroes' })],
+            ['mutable', getBooleanEncoder()],
+            ['canonical', getBooleanEncoder()],
+            ['seed', getSeedEncoder()],
+            ['encoding', getEncodingEncoder()],
+            ['compression', getCompressionEncoder()],
+            ['format', getFormatEncoder()],
+            ['dataSource', getDataSourceEncoder()],
+            ['dataLength', padRightEncoder(getU32Encoder(), 5)],
+            ['data', getBytesEncoder()],
+        ]),
+        value => ({ ...value, discriminator: AccountDiscriminator.Metadata }),
+    );
 }
 
 /** Gets the decoder for {@link Metadata} account data. */
 export function getMetadataDecoder(): Decoder<Metadata> {
-  return getStructDecoder([
-    ['discriminator', getAccountDiscriminatorDecoder()],
-    ['program', getAddressDecoder()],
-    [
-      'authority',
-      getOptionDecoder(getAddressDecoder(), {
-        prefix: null,
-        noneValue: 'zeroes',
-      }),
-    ],
-    ['mutable', getBooleanDecoder()],
-    ['canonical', getBooleanDecoder()],
-    ['seed', getSeedDecoder()],
-    ['encoding', getEncodingDecoder()],
-    ['compression', getCompressionDecoder()],
-    ['format', getFormatDecoder()],
-    ['dataSource', getDataSourceDecoder()],
-    ['dataLength', padRightDecoder(getU32Decoder(), 5)],
-    ['data', getBytesDecoder()],
-  ]);
+    return getStructDecoder([
+        ['discriminator', getAccountDiscriminatorDecoder()],
+        ['program', getAddressDecoder()],
+        ['authority', getOptionDecoder(getAddressDecoder(), { prefix: null, noneValue: 'zeroes' })],
+        ['mutable', getBooleanDecoder()],
+        ['canonical', getBooleanDecoder()],
+        ['seed', getSeedDecoder()],
+        ['encoding', getEncodingDecoder()],
+        ['compression', getCompressionDecoder()],
+        ['format', getFormatDecoder()],
+        ['dataSource', getDataSourceDecoder()],
+        ['dataLength', padRightDecoder(getU32Decoder(), 5)],
+        ['data', getBytesDecoder()],
+    ]);
 }
 
 /** Gets the codec for {@link Metadata} account data. */
 export function getMetadataCodec(): Codec<MetadataArgs, Metadata> {
-  return combineCodec(getMetadataEncoder(), getMetadataDecoder());
+    return combineCodec(getMetadataEncoder(), getMetadataDecoder());
 }
 
 export function decodeMetadata<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress>
+    encodedAccount: EncodedAccount<TAddress>,
 ): Account<Metadata, TAddress>;
 export function decodeMetadata<TAddress extends string = string>(
-  encodedAccount: MaybeEncodedAccount<TAddress>
+    encodedAccount: MaybeEncodedAccount<TAddress>,
 ): MaybeAccount<Metadata, TAddress>;
 export function decodeMetadata<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>
+    encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>,
 ): Account<Metadata, TAddress> | MaybeAccount<Metadata, TAddress> {
-  return decodeAccount(
-    encodedAccount as MaybeEncodedAccount<TAddress>,
-    getMetadataDecoder()
-  );
+    return decodeAccount(encodedAccount as MaybeEncodedAccount<TAddress>, getMetadataDecoder());
 }
 
 export async function fetchMetadata<TAddress extends string = string>(
-  rpc: Parameters<typeof fetchEncodedAccount>[0],
-  address: Address<TAddress>,
-  config?: FetchAccountConfig
+    rpc: Parameters<typeof fetchEncodedAccount>[0],
+    address: Address<TAddress>,
+    config?: FetchAccountConfig,
 ): Promise<Account<Metadata, TAddress>> {
-  const maybeAccount = await fetchMaybeMetadata(rpc, address, config);
-  assertAccountExists(maybeAccount);
-  return maybeAccount;
+    const maybeAccount = await fetchMaybeMetadata(rpc, address, config);
+    assertAccountExists(maybeAccount);
+    return maybeAccount;
 }
 
 export async function fetchMaybeMetadata<TAddress extends string = string>(
-  rpc: Parameters<typeof fetchEncodedAccount>[0],
-  address: Address<TAddress>,
-  config?: FetchAccountConfig
+    rpc: Parameters<typeof fetchEncodedAccount>[0],
+    address: Address<TAddress>,
+    config?: FetchAccountConfig,
 ): Promise<MaybeAccount<Metadata, TAddress>> {
-  const maybeAccount = await fetchEncodedAccount(rpc, address, config);
-  return decodeMetadata(maybeAccount);
+    const maybeAccount = await fetchEncodedAccount(rpc, address, config);
+    return decodeMetadata(maybeAccount);
 }
 
 export async function fetchAllMetadata(
-  rpc: Parameters<typeof fetchEncodedAccounts>[0],
-  addresses: Array<Address>,
-  config?: FetchAccountsConfig
+    rpc: Parameters<typeof fetchEncodedAccounts>[0],
+    addresses: Array<Address>,
+    config?: FetchAccountsConfig,
 ): Promise<Account<Metadata>[]> {
-  const maybeAccounts = await fetchAllMaybeMetadata(rpc, addresses, config);
-  assertAccountsExist(maybeAccounts);
-  return maybeAccounts;
+    const maybeAccounts = await fetchAllMaybeMetadata(rpc, addresses, config);
+    assertAccountsExist(maybeAccounts);
+    return maybeAccounts;
 }
 
 export async function fetchAllMaybeMetadata(
-  rpc: Parameters<typeof fetchEncodedAccounts>[0],
-  addresses: Array<Address>,
-  config?: FetchAccountsConfig
+    rpc: Parameters<typeof fetchEncodedAccounts>[0],
+    addresses: Array<Address>,
+    config?: FetchAccountsConfig,
 ): Promise<MaybeAccount<Metadata>[]> {
-  const maybeAccounts = await fetchEncodedAccounts(rpc, addresses, config);
-  return maybeAccounts.map((maybeAccount) => decodeMetadata(maybeAccount));
+    const maybeAccounts = await fetchEncodedAccounts(rpc, addresses, config);
+    return maybeAccounts.map(maybeAccount => decodeMetadata(maybeAccount));
 }
 
 export async function fetchMetadataFromSeeds(
-  rpc: Parameters<typeof fetchEncodedAccount>[0],
-  seeds: MetadataSeeds,
-  config: FetchAccountConfig & { programAddress?: Address } = {}
+    rpc: Parameters<typeof fetchEncodedAccount>[0],
+    seeds: MetadataSeeds,
+    config: FetchAccountConfig & { programAddress?: Address } = {},
 ): Promise<Account<Metadata>> {
-  const maybeAccount = await fetchMaybeMetadataFromSeeds(rpc, seeds, config);
-  assertAccountExists(maybeAccount);
-  return maybeAccount;
+    const maybeAccount = await fetchMaybeMetadataFromSeeds(rpc, seeds, config);
+    assertAccountExists(maybeAccount);
+    return maybeAccount;
 }
 
 export async function fetchMaybeMetadataFromSeeds(
-  rpc: Parameters<typeof fetchEncodedAccount>[0],
-  seeds: MetadataSeeds,
-  config: FetchAccountConfig & { programAddress?: Address } = {}
+    rpc: Parameters<typeof fetchEncodedAccount>[0],
+    seeds: MetadataSeeds,
+    config: FetchAccountConfig & { programAddress?: Address } = {},
 ): Promise<MaybeAccount<Metadata>> {
-  const { programAddress, ...fetchConfig } = config;
-  const [address] = await findMetadataPda(seeds, { programAddress });
-  return await fetchMaybeMetadata(rpc, address, fetchConfig);
+    const { programAddress, ...fetchConfig } = config;
+    const [address] = await findMetadataPda(seeds, { programAddress });
+    return await fetchMaybeMetadata(rpc, address, fetchConfig);
 }

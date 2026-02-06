@@ -7,26 +7,26 @@
  */
 
 import {
-  combineCodec,
-  getStructDecoder,
-  getStructEncoder,
-  getU8Decoder,
-  getU8Encoder,
-  transformEncoder,
-  type AccountMeta,
-  type AccountSignerMeta,
-  type Address,
-  type FixedSizeCodec,
-  type FixedSizeDecoder,
-  type FixedSizeEncoder,
-  type Instruction,
-  type InstructionWithAccounts,
-  type InstructionWithData,
-  type ReadonlyAccount,
-  type ReadonlySignerAccount,
-  type ReadonlyUint8Array,
-  type TransactionSigner,
-  type WritableAccount,
+    combineCodec,
+    getStructDecoder,
+    getStructEncoder,
+    getU8Decoder,
+    getU8Encoder,
+    transformEncoder,
+    type AccountMeta,
+    type AccountSignerMeta,
+    type Address,
+    type FixedSizeCodec,
+    type FixedSizeDecoder,
+    type FixedSizeEncoder,
+    type Instruction,
+    type InstructionWithAccounts,
+    type InstructionWithData,
+    type ReadonlyAccount,
+    type ReadonlySignerAccount,
+    type ReadonlyUint8Array,
+    type TransactionSigner,
+    type WritableAccount,
 } from '@solana/kit';
 import { PROGRAM_METADATA_PROGRAM_ADDRESS } from '../programs';
 import { getAccountMetaFactory, type ResolvedAccount } from '../shared';
@@ -34,184 +34,154 @@ import { getAccountMetaFactory, type ResolvedAccount } from '../shared';
 export const SET_IMMUTABLE_DISCRIMINATOR = 4;
 
 export function getSetImmutableDiscriminatorBytes() {
-  return getU8Encoder().encode(SET_IMMUTABLE_DISCRIMINATOR);
+    return getU8Encoder().encode(SET_IMMUTABLE_DISCRIMINATOR);
 }
 
 export type SetImmutableInstruction<
-  TProgram extends string = typeof PROGRAM_METADATA_PROGRAM_ADDRESS,
-  TAccountMetadata extends string | AccountMeta<string> = string,
-  TAccountAuthority extends string | AccountMeta<string> = string,
-  TAccountProgram extends string | AccountMeta<string> = string,
-  TAccountProgramData extends string | AccountMeta<string> = string,
-  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
+    TProgram extends string = typeof PROGRAM_METADATA_PROGRAM_ADDRESS,
+    TAccountMetadata extends string | AccountMeta<string> = string,
+    TAccountAuthority extends string | AccountMeta<string> = string,
+    TAccountProgram extends string | AccountMeta<string> = string,
+    TAccountProgramData extends string | AccountMeta<string> = string,
+    TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
-  InstructionWithData<ReadonlyUint8Array> &
-  InstructionWithAccounts<
-    [
-      TAccountMetadata extends string
-        ? WritableAccount<TAccountMetadata>
-        : TAccountMetadata,
-      TAccountAuthority extends string
-        ? ReadonlySignerAccount<TAccountAuthority> &
-            AccountSignerMeta<TAccountAuthority>
-        : TAccountAuthority,
-      TAccountProgram extends string
-        ? ReadonlyAccount<TAccountProgram>
-        : TAccountProgram,
-      TAccountProgramData extends string
-        ? ReadonlyAccount<TAccountProgramData>
-        : TAccountProgramData,
-      ...TRemainingAccounts,
-    ]
-  >;
+    InstructionWithData<ReadonlyUint8Array> &
+    InstructionWithAccounts<
+        [
+            TAccountMetadata extends string ? WritableAccount<TAccountMetadata> : TAccountMetadata,
+            TAccountAuthority extends string
+                ? ReadonlySignerAccount<TAccountAuthority> & AccountSignerMeta<TAccountAuthority>
+                : TAccountAuthority,
+            TAccountProgram extends string ? ReadonlyAccount<TAccountProgram> : TAccountProgram,
+            TAccountProgramData extends string ? ReadonlyAccount<TAccountProgramData> : TAccountProgramData,
+            ...TRemainingAccounts,
+        ]
+    >;
 
 export type SetImmutableInstructionData = { discriminator: number };
 
 export type SetImmutableInstructionDataArgs = {};
 
 export function getSetImmutableInstructionDataEncoder(): FixedSizeEncoder<SetImmutableInstructionDataArgs> {
-  return transformEncoder(
-    getStructEncoder([['discriminator', getU8Encoder()]]),
-    (value) => ({ ...value, discriminator: SET_IMMUTABLE_DISCRIMINATOR })
-  );
+    return transformEncoder(getStructEncoder([['discriminator', getU8Encoder()]]), value => ({
+        ...value,
+        discriminator: SET_IMMUTABLE_DISCRIMINATOR,
+    }));
 }
 
 export function getSetImmutableInstructionDataDecoder(): FixedSizeDecoder<SetImmutableInstructionData> {
-  return getStructDecoder([['discriminator', getU8Decoder()]]);
+    return getStructDecoder([['discriminator', getU8Decoder()]]);
 }
 
 export function getSetImmutableInstructionDataCodec(): FixedSizeCodec<
-  SetImmutableInstructionDataArgs,
-  SetImmutableInstructionData
+    SetImmutableInstructionDataArgs,
+    SetImmutableInstructionData
 > {
-  return combineCodec(
-    getSetImmutableInstructionDataEncoder(),
-    getSetImmutableInstructionDataDecoder()
-  );
+    return combineCodec(getSetImmutableInstructionDataEncoder(), getSetImmutableInstructionDataDecoder());
 }
 
 export type SetImmutableInput<
-  TAccountMetadata extends string = string,
-  TAccountAuthority extends string = string,
-  TAccountProgram extends string = string,
-  TAccountProgramData extends string = string,
+    TAccountMetadata extends string = string,
+    TAccountAuthority extends string = string,
+    TAccountProgram extends string = string,
+    TAccountProgramData extends string = string,
 > = {
-  /** Metadata account. */
-  metadata: Address<TAccountMetadata>;
-  /** Authority account. */
-  authority: TransactionSigner<TAccountAuthority>;
-  /** Program account. */
-  program?: Address<TAccountProgram>;
-  /** Program data account. */
-  programData?: Address<TAccountProgramData>;
+    /** Metadata account. */
+    metadata: Address<TAccountMetadata>;
+    /** Authority account. */
+    authority: TransactionSigner<TAccountAuthority>;
+    /** Program account. */
+    program?: Address<TAccountProgram>;
+    /** Program data account. */
+    programData?: Address<TAccountProgramData>;
 };
 
 export function getSetImmutableInstruction<
-  TAccountMetadata extends string,
-  TAccountAuthority extends string,
-  TAccountProgram extends string,
-  TAccountProgramData extends string,
-  TProgramAddress extends Address = typeof PROGRAM_METADATA_PROGRAM_ADDRESS,
+    TAccountMetadata extends string,
+    TAccountAuthority extends string,
+    TAccountProgram extends string,
+    TAccountProgramData extends string,
+    TProgramAddress extends Address = typeof PROGRAM_METADATA_PROGRAM_ADDRESS,
 >(
-  input: SetImmutableInput<
-    TAccountMetadata,
-    TAccountAuthority,
-    TAccountProgram,
-    TAccountProgramData
-  >,
-  config?: { programAddress?: TProgramAddress }
-): SetImmutableInstruction<
-  TProgramAddress,
-  TAccountMetadata,
-  TAccountAuthority,
-  TAccountProgram,
-  TAccountProgramData
-> {
-  // Program address.
-  const programAddress =
-    config?.programAddress ?? PROGRAM_METADATA_PROGRAM_ADDRESS;
+    input: SetImmutableInput<TAccountMetadata, TAccountAuthority, TAccountProgram, TAccountProgramData>,
+    config?: { programAddress?: TProgramAddress },
+): SetImmutableInstruction<TProgramAddress, TAccountMetadata, TAccountAuthority, TAccountProgram, TAccountProgramData> {
+    // Program address.
+    const programAddress = config?.programAddress ?? PROGRAM_METADATA_PROGRAM_ADDRESS;
 
-  // Original accounts.
-  const originalAccounts = {
-    metadata: { value: input.metadata ?? null, isWritable: true },
-    authority: { value: input.authority ?? null, isWritable: false },
-    program: { value: input.program ?? null, isWritable: false },
-    programData: { value: input.programData ?? null, isWritable: false },
-  };
-  const accounts = originalAccounts as Record<
-    keyof typeof originalAccounts,
-    ResolvedAccount
-  >;
+    // Original accounts.
+    const originalAccounts = {
+        metadata: { value: input.metadata ?? null, isWritable: true },
+        authority: { value: input.authority ?? null, isWritable: false },
+        program: { value: input.program ?? null, isWritable: false },
+        programData: { value: input.programData ?? null, isWritable: false },
+    };
+    const accounts = originalAccounts as Record<keyof typeof originalAccounts, ResolvedAccount>;
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
-  return Object.freeze({
-    accounts: [
-      getAccountMeta(accounts.metadata),
-      getAccountMeta(accounts.authority),
-      getAccountMeta(accounts.program),
-      getAccountMeta(accounts.programData),
-    ],
-    data: getSetImmutableInstructionDataEncoder().encode({}),
-    programAddress,
-  } as SetImmutableInstruction<
-    TProgramAddress,
-    TAccountMetadata,
-    TAccountAuthority,
-    TAccountProgram,
-    TAccountProgramData
-  >);
+    const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
+    return Object.freeze({
+        accounts: [
+            getAccountMeta(accounts.metadata),
+            getAccountMeta(accounts.authority),
+            getAccountMeta(accounts.program),
+            getAccountMeta(accounts.programData),
+        ],
+        data: getSetImmutableInstructionDataEncoder().encode({}),
+        programAddress,
+    } as SetImmutableInstruction<
+        TProgramAddress,
+        TAccountMetadata,
+        TAccountAuthority,
+        TAccountProgram,
+        TAccountProgramData
+    >);
 }
 
 export type ParsedSetImmutableInstruction<
-  TProgram extends string = typeof PROGRAM_METADATA_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
+    TProgram extends string = typeof PROGRAM_METADATA_PROGRAM_ADDRESS,
+    TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
-  programAddress: Address<TProgram>;
-  accounts: {
-    /** Metadata account. */
-    metadata: TAccountMetas[0];
-    /** Authority account. */
-    authority: TAccountMetas[1];
-    /** Program account. */
-    program?: TAccountMetas[2] | undefined;
-    /** Program data account. */
-    programData?: TAccountMetas[3] | undefined;
-  };
-  data: SetImmutableInstructionData;
+    programAddress: Address<TProgram>;
+    accounts: {
+        /** Metadata account. */
+        metadata: TAccountMetas[0];
+        /** Authority account. */
+        authority: TAccountMetas[1];
+        /** Program account. */
+        program?: TAccountMetas[2] | undefined;
+        /** Program data account. */
+        programData?: TAccountMetas[3] | undefined;
+    };
+    data: SetImmutableInstructionData;
 };
 
-export function parseSetImmutableInstruction<
-  TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[],
->(
-  instruction: Instruction<TProgram> &
-    InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+export function parseSetImmutableInstruction<TProgram extends string, TAccountMetas extends readonly AccountMeta[]>(
+    instruction: Instruction<TProgram> &
+        InstructionWithAccounts<TAccountMetas> &
+        InstructionWithData<ReadonlyUint8Array>,
 ): ParsedSetImmutableInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 4) {
-    // TODO: Coded error.
-    throw new Error('Not enough accounts');
-  }
-  let accountIndex = 0;
-  const getNextAccount = () => {
-    const accountMeta = (instruction.accounts as TAccountMetas)[accountIndex]!;
-    accountIndex += 1;
-    return accountMeta;
-  };
-  const getNextOptionalAccount = () => {
-    const accountMeta = getNextAccount();
-    return accountMeta.address === PROGRAM_METADATA_PROGRAM_ADDRESS
-      ? undefined
-      : accountMeta;
-  };
-  return {
-    programAddress: instruction.programAddress,
-    accounts: {
-      metadata: getNextAccount(),
-      authority: getNextAccount(),
-      program: getNextOptionalAccount(),
-      programData: getNextOptionalAccount(),
-    },
-    data: getSetImmutableInstructionDataDecoder().decode(instruction.data),
-  };
+    if (instruction.accounts.length < 4) {
+        // TODO: Coded error.
+        throw new Error('Not enough accounts');
+    }
+    let accountIndex = 0;
+    const getNextAccount = () => {
+        const accountMeta = (instruction.accounts as TAccountMetas)[accountIndex]!;
+        accountIndex += 1;
+        return accountMeta;
+    };
+    const getNextOptionalAccount = () => {
+        const accountMeta = getNextAccount();
+        return accountMeta.address === PROGRAM_METADATA_PROGRAM_ADDRESS ? undefined : accountMeta;
+    };
+    return {
+        programAddress: instruction.programAddress,
+        accounts: {
+            metadata: getNextAccount(),
+            authority: getNextAccount(),
+            program: getNextOptionalAccount(),
+            programData: getNextOptionalAccount(),
+        },
+        data: getSetImmutableInstructionDataDecoder().decode(instruction.data),
+    };
 }

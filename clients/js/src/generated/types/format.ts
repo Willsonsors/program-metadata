@@ -7,31 +7,31 @@
  */
 
 import {
-  combineCodec,
-  getEnumDecoder,
-  getEnumEncoder,
-  type FixedSizeCodec,
-  type FixedSizeDecoder,
-  type FixedSizeEncoder,
+    combineCodec,
+    getEnumDecoder,
+    getEnumEncoder,
+    type FixedSizeCodec,
+    type FixedSizeDecoder,
+    type FixedSizeEncoder,
 } from '@solana/kit';
 
 export enum Format {
-  None,
-  Json,
-  Yaml,
-  Toml,
+    None,
+    Json,
+    Yaml,
+    Toml,
 }
 
 export type FormatArgs = Format;
 
 export function getFormatEncoder(): FixedSizeEncoder<FormatArgs> {
-  return getEnumEncoder(Format);
+    return getEnumEncoder(Format);
 }
 
 export function getFormatDecoder(): FixedSizeDecoder<Format> {
-  return getEnumDecoder(Format);
+    return getEnumDecoder(Format);
 }
 
 export function getFormatCodec(): FixedSizeCodec<FormatArgs, Format> {
-  return combineCodec(getFormatEncoder(), getFormatDecoder());
+    return combineCodec(getFormatEncoder(), getFormatDecoder());
 }
