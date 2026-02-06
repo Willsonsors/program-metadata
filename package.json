@@ -1,40 +1,42 @@
 {
-  "private": true,
-  "scripts": {
-    "programs:build": "zx ./scripts/rust/build-sbf.mjs program",
-    "programs:format": "zx ./scripts/rust/format.mjs program",
-    "programs:lint": "zx ./scripts/rust/lint.mjs program",
-    "programs:test": "zx ./scripts/rust/test.mjs program",
-    "solana:check": "zx ./scripts/check-solana-version.mjs",
-    "solana:link": "zx ./scripts/link-solana-version.mjs",
-    "generate": "pnpm generate:clients",
-    "generate:clients": "zx ./scripts/generate-clients.mjs",
-    "validator:start": "zx ./scripts/start-validator.mjs",
-    "validator:restart": "pnpm validator:start --restart",
-    "validator:stop": "zx ./scripts/stop-validator.mjs",
-    "clients:js:format": "zx ./scripts/js/format.mjs",
-    "clients:js:lint": "zx ./scripts/js/lint.mjs",
-    "clients:js:publish": "zx ./scripts/js/publish.mjs",
-    "clients:js:test": "zx ./scripts/js/test.mjs",
-    "clients:rust:format": "zx ./scripts/rust/format.mjs clients/rust",
-    "clients:rust:lint": "zx ./scripts/rust/lint.mjs clients/rust",
-    "clients:rust:test": "zx ./scripts/rust/test.mjs clients/rust",
-    "template:upgrade": "zx ./scripts/upgrade-template.mjs",
-    "rust:spellcheck": "cargo spellcheck --code 1",
-    "rust:audit": "zx ./scripts/rust/audit.mjs",
-    "rust:publish": "zx ./scripts/rust/publish.mjs",
-    "rust:semver": "cargo semver-checks"
-  },
-  "devDependencies": {
-    "@codama/renderers-js": "^1.7.0",
-    "@codama/renderers-rust": "^1.2.9",
-    "@iarna/toml": "^2.2.5",
-    "codama": "^1.5.0",
-    "typescript": "^5.5.2",
-    "zx": "^7.2.3"
-  },
-  "engines": {
-    "node": ">=v20.0.0"
-  },
-  "packageManager": "pnpm@10.15.1"
+    "private": true,
+    "scripts": {
+        "programs:build": "zx ./scripts/rust/build-sbf.mjs program",
+        "programs:format": "zx ./scripts/rust/format.mjs program",
+        "programs:lint": "zx ./scripts/rust/lint.mjs program",
+        "programs:test": "zx ./scripts/rust/test.mjs program",
+        "solana:check": "zx ./scripts/check-solana-version.mjs",
+        "solana:link": "zx ./scripts/link-solana-version.mjs",
+        "generate": "pnpm generate:clients",
+        "generate:clients": "codama run --all",
+        "validator:start": "zx ./scripts/start-validator.mjs",
+        "validator:restart": "pnpm validator:start --restart",
+        "validator:stop": "zx ./scripts/stop-validator.mjs",
+        "clients:js:format": "zx ./scripts/js/format.mjs",
+        "clients:js:lint": "zx ./scripts/js/lint.mjs",
+        "clients:js:publish": "zx ./scripts/js/publish.mjs",
+        "clients:js:test": "zx ./scripts/js/test.mjs",
+        "clients:rust:format": "zx ./scripts/rust/format.mjs clients/rust",
+        "clients:rust:lint": "zx ./scripts/rust/lint.mjs clients/rust",
+        "clients:rust:test": "zx ./scripts/rust/test.mjs clients/rust",
+        "template:upgrade": "zx ./scripts/upgrade-template.mjs",
+        "rust:spellcheck": "cargo spellcheck --code 1",
+        "rust:audit": "zx ./scripts/rust/audit.mjs",
+        "rust:publish": "zx ./scripts/rust/publish.mjs",
+        "rust:semver": "cargo semver-checks"
+    },
+    "devDependencies": {
+        "@codama/renderers-js": "^1.7.0",
+        "@codama/renderers-rust": "^1.2.9",
+        "@iarna/toml": "^2.2.5",
+        "@solana/prettier-config-solana": "0.0.6",
+        "codama": "^1.5.0",
+        "typescript": "^5.5.2",
+        "zx": "^7.2.3"
+    },
+    "engines": {
+        "node": ">=v20.0.0"
+    },
+    "packageManager": "pnpm@10.15.1",
+    "prettier": "@solana/prettier-config-solana"
 }
