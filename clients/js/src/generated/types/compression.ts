@@ -7,33 +7,30 @@
  */
 
 import {
-  combineCodec,
-  getEnumDecoder,
-  getEnumEncoder,
-  type FixedSizeCodec,
-  type FixedSizeDecoder,
-  type FixedSizeEncoder,
+    combineCodec,
+    getEnumDecoder,
+    getEnumEncoder,
+    type FixedSizeCodec,
+    type FixedSizeDecoder,
+    type FixedSizeEncoder,
 } from '@solana/kit';
 
 export enum Compression {
-  None,
-  Gzip,
-  Zlib,
+    None,
+    Gzip,
+    Zlib,
 }
 
 export type CompressionArgs = Compression;
 
 export function getCompressionEncoder(): FixedSizeEncoder<CompressionArgs> {
-  return getEnumEncoder(Compression);
+    return getEnumEncoder(Compression);
 }
 
 export function getCompressionDecoder(): FixedSizeDecoder<Compression> {
-  return getEnumDecoder(Compression);
+    return getEnumDecoder(Compression);
 }
 
-export function getCompressionCodec(): FixedSizeCodec<
-  CompressionArgs,
-  Compression
-> {
-  return combineCodec(getCompressionEncoder(), getCompressionDecoder());
+export function getCompressionCodec(): FixedSizeCodec<CompressionArgs, Compression> {
+    return combineCodec(getCompressionEncoder(), getCompressionDecoder());
 }

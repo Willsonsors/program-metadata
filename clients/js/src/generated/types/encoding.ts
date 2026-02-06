@@ -7,31 +7,31 @@
  */
 
 import {
-  combineCodec,
-  getEnumDecoder,
-  getEnumEncoder,
-  type FixedSizeCodec,
-  type FixedSizeDecoder,
-  type FixedSizeEncoder,
+    combineCodec,
+    getEnumDecoder,
+    getEnumEncoder,
+    type FixedSizeCodec,
+    type FixedSizeDecoder,
+    type FixedSizeEncoder,
 } from '@solana/kit';
 
 export enum Encoding {
-  None,
-  Utf8,
-  Base58,
-  Base64,
+    None,
+    Utf8,
+    Base58,
+    Base64,
 }
 
 export type EncodingArgs = Encoding;
 
 export function getEncodingEncoder(): FixedSizeEncoder<EncodingArgs> {
-  return getEnumEncoder(Encoding);
+    return getEnumEncoder(Encoding);
 }
 
 export function getEncodingDecoder(): FixedSizeDecoder<Encoding> {
-  return getEnumDecoder(Encoding);
+    return getEnumDecoder(Encoding);
 }
 
 export function getEncodingCodec(): FixedSizeCodec<EncodingArgs, Encoding> {
-  return combineCodec(getEncodingEncoder(), getEncodingDecoder());
+    return combineCodec(getEncodingEncoder(), getEncodingDecoder());
 }

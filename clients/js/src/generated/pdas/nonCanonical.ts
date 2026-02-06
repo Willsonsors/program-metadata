@@ -6,37 +6,32 @@
  * @see https://github.com/codama-idl/codama
  */
 
-import {
-  getAddressEncoder,
-  getProgramDerivedAddress,
-  type Address,
-  type ProgramDerivedAddress,
-} from '@solana/kit';
+import { getAddressEncoder, getProgramDerivedAddress, type Address, type ProgramDerivedAddress } from '@solana/kit';
 import { getSeedEncoder, type SeedArgs } from '../types';
 
 export type NonCanonicalSeeds = {
-  /** The program to which the metadata belongs. */
-  program: Address;
-  /** The third-party authority managing this metadata account. */
-  authority: Address;
-  /** The seed deriving the metadata account. */
-  seed: SeedArgs;
+    /** The program to which the metadata belongs. */
+    program: Address;
+    /** The third-party authority managing this metadata account. */
+    authority: Address;
+    /** The seed deriving the metadata account. */
+    seed: SeedArgs;
 };
 
 /** The derivation for metadata accounts managed by third-party authorities. */
 export async function findNonCanonicalPda(
-  seeds: NonCanonicalSeeds,
-  config: { programAddress?: Address | undefined } = {}
+    seeds: NonCanonicalSeeds,
+    config: { programAddress?: Address | undefined } = {},
 ): Promise<ProgramDerivedAddress> {
-  const {
-    programAddress = 'ProgM6JCCvbYkfKqJYHePx4xxSUSqJp7rh8Lyv7nk7S' as Address<'ProgM6JCCvbYkfKqJYHePx4xxSUSqJp7rh8Lyv7nk7S'>,
-  } = config;
-  return await getProgramDerivedAddress({
-    programAddress,
-    seeds: [
-      getAddressEncoder().encode(seeds.program),
-      getAddressEncoder().encode(seeds.authority),
-      getSeedEncoder().encode(seeds.seed),
-    ],
-  });
+    const {
+        programAddress = 'ProgM6JCCvbYkfKqJYHePx4xxSUSqJp7rh8Lyv7nk7S' as Address<'ProgM6JCCvbYkfKqJYHePx4xxSUSqJp7rh8Lyv7nk7S'>,
+    } = config;
+    return await getProgramDerivedAddress({
+        programAddress,
+        seeds: [
+            getAddressEncoder().encode(seeds.program),
+            getAddressEncoder().encode(seeds.authority),
+            getSeedEncoder().encode(seeds.seed),
+        ],
+    });
 }

@@ -185,27 +185,23 @@ For that you just create a json file containing the security.txt data and upload
 
 ```json
 {
-  "name": "MyProgramName",
-  "logo": "https://upload.wikimedia.org/wikipedia/en/b/b9/Solana_logo.png",
-  "description": "Example program for metadata",
-  "notification": "On the first of January we will release a new version! Please update your SDKs!!!!",
-  "sdk": "https://github.com/solana-program/program-metadata",
-  "project_url": "https://github.com/solana-developers/",
-  "contacts": [
-    "email:security@example.com",
-    "discord:MyProgram#1234",
-    "twitter:@MyProgram"
-  ],
-  "policy": "https://example.com/security-policy",
-  "preferred_languages": ["en", "de"],
-  "encryption": "https://example.com/pgp-key",
-  "source_code": "https://github.com/solana-developers/",
-  "source_release": "v0.1.0",
-  "source_revision": "abc123def456",
-  "auditors": ["Audit Firm A", "Security Researcher B"],
-  "acknowledgements": "https://example.com/security-acknowledgements",
-  "expiry": "2024-12-31",
-  "version": "0.1.0"
+    "name": "MyProgramName",
+    "logo": "https://upload.wikimedia.org/wikipedia/en/b/b9/Solana_logo.png",
+    "description": "Example program for metadata",
+    "notification": "On the first of January we will release a new version! Please update your SDKs!!!!",
+    "sdk": "https://github.com/solana-program/program-metadata",
+    "project_url": "https://github.com/solana-developers/",
+    "contacts": ["email:security@example.com", "discord:MyProgram#1234", "twitter:@MyProgram"],
+    "policy": "https://example.com/security-policy",
+    "preferred_languages": ["en", "de"],
+    "encryption": "https://example.com/pgp-key",
+    "source_code": "https://github.com/solana-developers/",
+    "source_release": "v0.1.0",
+    "source_revision": "abc123def456",
+    "auditors": ["Audit Firm A", "Security Researcher B"],
+    "acknowledgements": "https://example.com/security-acknowledgements",
+    "expiry": "2024-12-31",
+    "version": "0.1.0"
 }
 ```
 
@@ -231,8 +227,8 @@ const rpc = createSolanaRpc('https://api.mainnet-beta.solana.com'); // or devnet
 const programId = 'YOUR_PROGRAM_ID';
 
 async function main() {
-  const idl = await fetchAndParseMetadataContent(rpc, programId, 'idl');
-  console.log(idl);
+    const idl = await fetchAndParseMetadataContent(rpc, programId, 'idl');
+    console.log(idl);
 }
 
 main();

@@ -15,22 +15,22 @@ import { setUpdateBufferCommand } from './update-buffer';
 import { setWriteCommand } from './write';
 
 export function setCommands(program: CustomCommand): void {
-  program
-    // Metadata commands.
-    .tap(setWriteCommand)
-    .tap(setCreateCommand)
-    .tap(setUpdateCommand)
-    .tap(setFetchCommand)
-    .tap(setSetAuthorityCommand)
-    .tap(setRemoveAuthorityCommand)
-    .tap(setSetImmutableCommand)
-    .tap(setCloseCommand)
+    program
+        // Metadata commands.
+        .tap(setWriteCommand)
+        .tap(setCreateCommand)
+        .tap(setUpdateCommand)
+        .tap(setFetchCommand)
+        .tap(setSetAuthorityCommand)
+        .tap(setRemoveAuthorityCommand)
+        .tap(setSetImmutableCommand)
+        .tap(setCloseCommand)
 
-    // Buffer commands.
-    .tap(setCreateBufferCommand)
-    .tap(setUpdateBufferCommand)
-    .tap(setListBuffersCommand)
-    .tap(setFetchBufferCommand)
-    .tap(setSetBufferAuthorityCommand)
-    .tap(setCloseBufferCommand);
+        // Buffer commands.
+        .tap(setCreateBufferCommand)
+        .tap(setUpdateBufferCommand)
+        .tap(setListBuffersCommand)
+        .tap(setFetchBufferCommand)
+        .tap(setSetBufferAuthorityCommand)
+        .tap(setCloseBufferCommand);
 }

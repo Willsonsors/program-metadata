@@ -7,192 +7,165 @@
  */
 
 import {
-  assertAccountExists,
-  assertAccountsExist,
-  combineCodec,
-  decodeAccount,
-  fetchEncodedAccount,
-  fetchEncodedAccounts,
-  getAddressDecoder,
-  getAddressEncoder,
-  getBooleanDecoder,
-  getBooleanEncoder,
-  getBytesDecoder,
-  getBytesEncoder,
-  getOptionDecoder,
-  getOptionEncoder,
-  getStructDecoder,
-  getStructEncoder,
-  padRightDecoder,
-  padRightEncoder,
-  transformEncoder,
-  type Account,
-  type Address,
-  type Codec,
-  type Decoder,
-  type EncodedAccount,
-  type Encoder,
-  type FetchAccountConfig,
-  type FetchAccountsConfig,
-  type MaybeAccount,
-  type MaybeEncodedAccount,
-  type Option,
-  type OptionOrNullable,
-  type ReadonlyUint8Array,
+    assertAccountExists,
+    assertAccountsExist,
+    combineCodec,
+    decodeAccount,
+    fetchEncodedAccount,
+    fetchEncodedAccounts,
+    getAddressDecoder,
+    getAddressEncoder,
+    getBooleanDecoder,
+    getBooleanEncoder,
+    getBytesDecoder,
+    getBytesEncoder,
+    getOptionDecoder,
+    getOptionEncoder,
+    getStructDecoder,
+    getStructEncoder,
+    padRightDecoder,
+    padRightEncoder,
+    transformEncoder,
+    type Account,
+    type Address,
+    type Codec,
+    type Decoder,
+    type EncodedAccount,
+    type Encoder,
+    type FetchAccountConfig,
+    type FetchAccountsConfig,
+    type MaybeAccount,
+    type MaybeEncodedAccount,
+    type Option,
+    type OptionOrNullable,
+    type ReadonlyUint8Array,
 } from '@solana/kit';
 import { findMetadataPda, MetadataSeeds } from '../pdas';
 import {
-  AccountDiscriminator,
-  getAccountDiscriminatorDecoder,
-  getAccountDiscriminatorEncoder,
-  getSeedDecoder,
-  getSeedEncoder,
-  type Seed,
-  type SeedArgs,
+    AccountDiscriminator,
+    getAccountDiscriminatorDecoder,
+    getAccountDiscriminatorEncoder,
+    getSeedDecoder,
+    getSeedEncoder,
+    type Seed,
+    type SeedArgs,
 } from '../types';
 
 export type Buffer = {
-  discriminator: AccountDiscriminator;
-  program: Option<Address>;
-  authority: Option<Address>;
-  canonical: boolean;
-  seed: Seed;
-  data: ReadonlyUint8Array;
+    discriminator: AccountDiscriminator;
+    program: Option<Address>;
+    authority: Option<Address>;
+    canonical: boolean;
+    seed: Seed;
+    data: ReadonlyUint8Array;
 };
 
 export type BufferArgs = {
-  program: OptionOrNullable<Address>;
-  authority: OptionOrNullable<Address>;
-  canonical: boolean;
-  seed: SeedArgs;
-  data: ReadonlyUint8Array;
+    program: OptionOrNullable<Address>;
+    authority: OptionOrNullable<Address>;
+    canonical: boolean;
+    seed: SeedArgs;
+    data: ReadonlyUint8Array;
 };
 
 /** Gets the encoder for {@link BufferArgs} account data. */
 export function getBufferEncoder(): Encoder<BufferArgs> {
-  return transformEncoder(
-    getStructEncoder([
-      ['discriminator', getAccountDiscriminatorEncoder()],
-      [
-        'program',
-        getOptionEncoder(getAddressEncoder(), {
-          prefix: null,
-          noneValue: 'zeroes',
-        }),
-      ],
-      [
-        'authority',
-        getOptionEncoder(getAddressEncoder(), {
-          prefix: null,
-          noneValue: 'zeroes',
-        }),
-      ],
-      ['canonical', getBooleanEncoder()],
-      ['seed', padRightEncoder(getSeedEncoder(), 14)],
-      ['data', getBytesEncoder()],
-    ]),
-    (value) => ({ ...value, discriminator: AccountDiscriminator.Buffer })
-  );
+    return transformEncoder(
+        getStructEncoder([
+            ['discriminator', getAccountDiscriminatorEncoder()],
+            ['program', getOptionEncoder(getAddressEncoder(), { prefix: null, noneValue: 'zeroes' })],
+            ['authority', getOptionEncoder(getAddressEncoder(), { prefix: null, noneValue: 'zeroes' })],
+            ['canonical', getBooleanEncoder()],
+            ['seed', padRightEncoder(getSeedEncoder(), 14)],
+            ['data', getBytesEncoder()],
+        ]),
+        value => ({ ...value, discriminator: AccountDiscriminator.Buffer }),
+    );
 }
 
 /** Gets the decoder for {@link Buffer} account data. */
 export function getBufferDecoder(): Decoder<Buffer> {
-  return getStructDecoder([
-    ['discriminator', getAccountDiscriminatorDecoder()],
-    [
-      'program',
-      getOptionDecoder(getAddressDecoder(), {
-        prefix: null,
-        noneValue: 'zeroes',
-      }),
-    ],
-    [
-      'authority',
-      getOptionDecoder(getAddressDecoder(), {
-        prefix: null,
-        noneValue: 'zeroes',
-      }),
-    ],
-    ['canonical', getBooleanDecoder()],
-    ['seed', padRightDecoder(getSeedDecoder(), 14)],
-    ['data', getBytesDecoder()],
-  ]);
+    return getStructDecoder([
+        ['discriminator', getAccountDiscriminatorDecoder()],
+        ['program', getOptionDecoder(getAddressDecoder(), { prefix: null, noneValue: 'zeroes' })],
+        ['authority', getOptionDecoder(getAddressDecoder(), { prefix: null, noneValue: 'zeroes' })],
+        ['canonical', getBooleanDecoder()],
+        ['seed', padRightDecoder(getSeedDecoder(), 14)],
+        ['data', getBytesDecoder()],
+    ]);
 }
 
 /** Gets the codec for {@link Buffer} account data. */
 export function getBufferCodec(): Codec<BufferArgs, Buffer> {
-  return combineCodec(getBufferEncoder(), getBufferDecoder());
+    return combineCodec(getBufferEncoder(), getBufferDecoder());
 }
 
 export function decodeBuffer<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress>
+    encodedAccount: EncodedAccount<TAddress>,
 ): Account<Buffer, TAddress>;
 export function decodeBuffer<TAddress extends string = string>(
-  encodedAccount: MaybeEncodedAccount<TAddress>
+    encodedAccount: MaybeEncodedAccount<TAddress>,
 ): MaybeAccount<Buffer, TAddress>;
 export function decodeBuffer<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>
+    encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>,
 ): Account<Buffer, TAddress> | MaybeAccount<Buffer, TAddress> {
-  return decodeAccount(
-    encodedAccount as MaybeEncodedAccount<TAddress>,
-    getBufferDecoder()
-  );
+    return decodeAccount(encodedAccount as MaybeEncodedAccount<TAddress>, getBufferDecoder());
 }
 
 export async function fetchBuffer<TAddress extends string = string>(
-  rpc: Parameters<typeof fetchEncodedAccount>[0],
-  address: Address<TAddress>,
-  config?: FetchAccountConfig
+    rpc: Parameters<typeof fetchEncodedAccount>[0],
+    address: Address<TAddress>,
+    config?: FetchAccountConfig,
 ): Promise<Account<Buffer, TAddress>> {
-  const maybeAccount = await fetchMaybeBuffer(rpc, address, config);
-  assertAccountExists(maybeAccount);
-  return maybeAccount;
+    const maybeAccount = await fetchMaybeBuffer(rpc, address, config);
+    assertAccountExists(maybeAccount);
+    return maybeAccount;
 }
 
 export async function fetchMaybeBuffer<TAddress extends string = string>(
-  rpc: Parameters<typeof fetchEncodedAccount>[0],
-  address: Address<TAddress>,
-  config?: FetchAccountConfig
+    rpc: Parameters<typeof fetchEncodedAccount>[0],
+    address: Address<TAddress>,
+    config?: FetchAccountConfig,
 ): Promise<MaybeAccount<Buffer, TAddress>> {
-  const maybeAccount = await fetchEncodedAccount(rpc, address, config);
-  return decodeBuffer(maybeAccount);
+    const maybeAccount = await fetchEncodedAccount(rpc, address, config);
+    return decodeBuffer(maybeAccount);
 }
 
 export async function fetchAllBuffer(
-  rpc: Parameters<typeof fetchEncodedAccounts>[0],
-  addresses: Array<Address>,
-  config?: FetchAccountsConfig
+    rpc: Parameters<typeof fetchEncodedAccounts>[0],
+    addresses: Array<Address>,
+    config?: FetchAccountsConfig,
 ): Promise<Account<Buffer>[]> {
-  const maybeAccounts = await fetchAllMaybeBuffer(rpc, addresses, config);
-  assertAccountsExist(maybeAccounts);
-  return maybeAccounts;
+    const maybeAccounts = await fetchAllMaybeBuffer(rpc, addresses, config);
+    assertAccountsExist(maybeAccounts);
+    return maybeAccounts;
 }
 
 export async function fetchAllMaybeBuffer(
-  rpc: Parameters<typeof fetchEncodedAccounts>[0],
-  addresses: Array<Address>,
-  config?: FetchAccountsConfig
+    rpc: Parameters<typeof fetchEncodedAccounts>[0],
+    addresses: Array<Address>,
+    config?: FetchAccountsConfig,
 ): Promise<MaybeAccount<Buffer>[]> {
-  const maybeAccounts = await fetchEncodedAccounts(rpc, addresses, config);
-  return maybeAccounts.map((maybeAccount) => decodeBuffer(maybeAccount));
+    const maybeAccounts = await fetchEncodedAccounts(rpc, addresses, config);
+    return maybeAccounts.map(maybeAccount => decodeBuffer(maybeAccount));
 }
 
 export async function fetchBufferFromSeeds(
-  rpc: Parameters<typeof fetchEncodedAccount>[0],
-  seeds: MetadataSeeds,
-  config: FetchAccountConfig & { programAddress?: Address } = {}
+    rpc: Parameters<typeof fetchEncodedAccount>[0],
+    seeds: MetadataSeeds,
+    config: FetchAccountConfig & { programAddress?: Address } = {},
 ): Promise<Account<Buffer>> {
-  const maybeAccount = await fetchMaybeBufferFromSeeds(rpc, seeds, config);
-  assertAccountExists(maybeAccount);
-  return maybeAccount;
+    const maybeAccount = await fetchMaybeBufferFromSeeds(rpc, seeds, config);
+    assertAccountExists(maybeAccount);
+    return maybeAccount;
 }
 
 export async function fetchMaybeBufferFromSeeds(
-  rpc: Parameters<typeof fetchEncodedAccount>[0],
-  seeds: MetadataSeeds,
-  config: FetchAccountConfig & { programAddress?: Address } = {}
+    rpc: Parameters<typeof fetchEncodedAccount>[0],
+    seeds: MetadataSeeds,
+    config: FetchAccountConfig & { programAddress?: Address } = {},
 ): Promise<MaybeAccount<Buffer>> {
-  const { programAddress, ...fetchConfig } = config;
-  const [address] = await findMetadataPda(seeds, { programAddress });
-  return await fetchMaybeBuffer(rpc, address, fetchConfig);
+    const { programAddress, ...fetchConfig } = config;
+    const [address] = await findMetadataPda(seeds, { programAddress });
+    return await fetchMaybeBuffer(rpc, address, fetchConfig);
 }

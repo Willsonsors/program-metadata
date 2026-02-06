@@ -7,60 +7,43 @@
  */
 
 import {
-  combineCodec,
-  getAddressDecoder,
-  getAddressEncoder,
-  getOptionDecoder,
-  getOptionEncoder,
-  getStructDecoder,
-  getStructEncoder,
-  getU32Decoder,
-  getU32Encoder,
-  type Address,
-  type FixedSizeCodec,
-  type FixedSizeDecoder,
-  type FixedSizeEncoder,
-  type Option,
-  type OptionOrNullable,
+    combineCodec,
+    getAddressDecoder,
+    getAddressEncoder,
+    getOptionDecoder,
+    getOptionEncoder,
+    getStructDecoder,
+    getStructEncoder,
+    getU32Decoder,
+    getU32Encoder,
+    type Address,
+    type FixedSizeCodec,
+    type FixedSizeDecoder,
+    type FixedSizeEncoder,
+    type Option,
+    type OptionOrNullable,
 } from '@solana/kit';
 
-export type ExternalData = {
-  address: Address;
-  offset: number;
-  length: Option<number>;
-};
+export type ExternalData = { address: Address; offset: number; length: Option<number> };
 
-export type ExternalDataArgs = {
-  address: Address;
-  offset: number;
-  length: OptionOrNullable<number>;
-};
+export type ExternalDataArgs = { address: Address; offset: number; length: OptionOrNullable<number> };
 
 export function getExternalDataEncoder(): FixedSizeEncoder<ExternalDataArgs> {
-  return getStructEncoder([
-    ['address', getAddressEncoder()],
-    ['offset', getU32Encoder()],
-    [
-      'length',
-      getOptionEncoder(getU32Encoder(), { prefix: null, noneValue: 'zeroes' }),
-    ],
-  ]);
+    return getStructEncoder([
+        ['address', getAddressEncoder()],
+        ['offset', getU32Encoder()],
+        ['length', getOptionEncoder(getU32Encoder(), { prefix: null, noneValue: 'zeroes' })],
+    ]);
 }
 
 export function getExternalDataDecoder(): FixedSizeDecoder<ExternalData> {
-  return getStructDecoder([
-    ['address', getAddressDecoder()],
-    ['offset', getU32Decoder()],
-    [
-      'length',
-      getOptionDecoder(getU32Decoder(), { prefix: null, noneValue: 'zeroes' }),
-    ],
-  ]);
+    return getStructDecoder([
+        ['address', getAddressDecoder()],
+        ['offset', getU32Decoder()],
+        ['length', getOptionDecoder(getU32Decoder(), { prefix: null, noneValue: 'zeroes' })],
+    ]);
 }
 
-export function getExternalDataCodec(): FixedSizeCodec<
-  ExternalDataArgs,
-  ExternalData
-> {
-  return combineCodec(getExternalDataEncoder(), getExternalDataDecoder());
+export function getExternalDataCodec(): FixedSizeCodec<ExternalDataArgs, ExternalData> {
+    return combineCodec(getExternalDataEncoder(), getExternalDataDecoder());
 }

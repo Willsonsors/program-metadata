@@ -7,40 +7,38 @@
  */
 
 import {
-  getAddressEncoder,
-  getOptionEncoder,
-  getProgramDerivedAddress,
-  type Address,
-  type OptionOrNullable,
-  type ProgramDerivedAddress,
+    getAddressEncoder,
+    getOptionEncoder,
+    getProgramDerivedAddress,
+    type Address,
+    type OptionOrNullable,
+    type ProgramDerivedAddress,
 } from '@solana/kit';
 import { getSeedEncoder, type SeedArgs } from '../types';
 
 export type MetadataSeeds = {
-  /** The program to which the metadata belongs. */
-  program: Address;
-  /** The third-party authority managing this metadata account, if non-canonical. */
-  authority: OptionOrNullable<Address>;
-  /** The seed deriving the metadata account. */
-  seed: SeedArgs;
+    /** The program to which the metadata belongs. */
+    program: Address;
+    /** The third-party authority managing this metadata account, if non-canonical. */
+    authority: OptionOrNullable<Address>;
+    /** The seed deriving the metadata account. */
+    seed: SeedArgs;
 };
 
 /** The derivation for metadata accounts, canonical or not, depending if an authority is provided. */
 export async function findMetadataPda(
-  seeds: MetadataSeeds,
-  config: { programAddress?: Address | undefined } = {}
+    seeds: MetadataSeeds,
+    config: { programAddress?: Address | undefined } = {},
 ): Promise<ProgramDerivedAddress> {
-  const {
-    programAddress = 'ProgM6JCCvbYkfKqJYHePx4xxSUSqJp7rh8Lyv7nk7S' as Address<'ProgM6JCCvbYkfKqJYHePx4xxSUSqJp7rh8Lyv7nk7S'>,
-  } = config;
-  return await getProgramDerivedAddress({
-    programAddress,
-    seeds: [
-      getAddressEncoder().encode(seeds.program),
-      getOptionEncoder(getAddressEncoder(), { prefix: null }).encode(
-        seeds.authority
-      ),
-      getSeedEncoder().encode(seeds.seed),
-    ],
-  });
+    const {
+        programAddress = 'ProgM6JCCvbYkfKqJYHePx4xxSUSqJp7rh8Lyv7nk7S' as Address<'ProgM6JCCvbYkfKqJYHePx4xxSUSqJp7rh8Lyv7nk7S'>,
+    } = config;
+    return await getProgramDerivedAddress({
+        programAddress,
+        seeds: [
+            getAddressEncoder().encode(seeds.program),
+            getOptionEncoder(getAddressEncoder(), { prefix: null }).encode(seeds.authority),
+            getSeedEncoder().encode(seeds.seed),
+        ],
+    });
 }

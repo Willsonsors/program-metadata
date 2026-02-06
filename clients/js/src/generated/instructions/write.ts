@@ -7,35 +7,35 @@
  */
 
 import {
-  combineCodec,
-  getBytesDecoder,
-  getBytesEncoder,
-  getOptionDecoder,
-  getOptionEncoder,
-  getStructDecoder,
-  getStructEncoder,
-  getU32Decoder,
-  getU32Encoder,
-  getU8Decoder,
-  getU8Encoder,
-  none,
-  transformEncoder,
-  type AccountMeta,
-  type AccountSignerMeta,
-  type Address,
-  type Codec,
-  type Decoder,
-  type Encoder,
-  type Instruction,
-  type InstructionWithAccounts,
-  type InstructionWithData,
-  type Option,
-  type OptionOrNullable,
-  type ReadonlyAccount,
-  type ReadonlySignerAccount,
-  type ReadonlyUint8Array,
-  type TransactionSigner,
-  type WritableAccount,
+    combineCodec,
+    getBytesDecoder,
+    getBytesEncoder,
+    getOptionDecoder,
+    getOptionEncoder,
+    getStructDecoder,
+    getStructEncoder,
+    getU32Decoder,
+    getU32Encoder,
+    getU8Decoder,
+    getU8Encoder,
+    none,
+    transformEncoder,
+    type AccountMeta,
+    type AccountSignerMeta,
+    type Address,
+    type Codec,
+    type Decoder,
+    type Encoder,
+    type Instruction,
+    type InstructionWithAccounts,
+    type InstructionWithData,
+    type Option,
+    type OptionOrNullable,
+    type ReadonlyAccount,
+    type ReadonlySignerAccount,
+    type ReadonlyUint8Array,
+    type TransactionSigner,
+    type WritableAccount,
 } from '@solana/kit';
 import { PROGRAM_METADATA_PROGRAM_ADDRESS } from '../programs';
 import { getAccountMetaFactory, type ResolvedAccount } from '../shared';
@@ -43,206 +43,166 @@ import { getAccountMetaFactory, type ResolvedAccount } from '../shared';
 export const WRITE_DISCRIMINATOR = 0;
 
 export function getWriteDiscriminatorBytes() {
-  return getU8Encoder().encode(WRITE_DISCRIMINATOR);
+    return getU8Encoder().encode(WRITE_DISCRIMINATOR);
 }
 
 export type WriteInstruction<
-  TProgram extends string = typeof PROGRAM_METADATA_PROGRAM_ADDRESS,
-  TAccountBuffer extends string | AccountMeta<string> = string,
-  TAccountAuthority extends string | AccountMeta<string> = string,
-  TAccountSourceBuffer extends string | AccountMeta<string> = string,
-  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
+    TProgram extends string = typeof PROGRAM_METADATA_PROGRAM_ADDRESS,
+    TAccountBuffer extends string | AccountMeta<string> = string,
+    TAccountAuthority extends string | AccountMeta<string> = string,
+    TAccountSourceBuffer extends string | AccountMeta<string> = string,
+    TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
-  InstructionWithData<ReadonlyUint8Array> &
-  InstructionWithAccounts<
-    [
-      TAccountBuffer extends string
-        ? WritableAccount<TAccountBuffer>
-        : TAccountBuffer,
-      TAccountAuthority extends string
-        ? ReadonlySignerAccount<TAccountAuthority> &
-            AccountSignerMeta<TAccountAuthority>
-        : TAccountAuthority,
-      TAccountSourceBuffer extends string
-        ? ReadonlyAccount<TAccountSourceBuffer>
-        : TAccountSourceBuffer,
-      ...TRemainingAccounts,
-    ]
-  >;
+    InstructionWithData<ReadonlyUint8Array> &
+    InstructionWithAccounts<
+        [
+            TAccountBuffer extends string ? WritableAccount<TAccountBuffer> : TAccountBuffer,
+            TAccountAuthority extends string
+                ? ReadonlySignerAccount<TAccountAuthority> & AccountSignerMeta<TAccountAuthority>
+                : TAccountAuthority,
+            TAccountSourceBuffer extends string ? ReadonlyAccount<TAccountSourceBuffer> : TAccountSourceBuffer,
+            ...TRemainingAccounts,
+        ]
+    >;
 
 export type WriteInstructionData = {
-  discriminator: number;
-  /** The offset to write to. */
-  offset: number;
-  /**
-   * The data to write at the provided offset.
-   * You may use the `source_buffer` account instead of this argument to copy from an existing buffer.
-   */
-  data: Option<ReadonlyUint8Array>;
+    discriminator: number;
+    /** The offset to write to. */
+    offset: number;
+    /**
+     * The data to write at the provided offset.
+     * You may use the `source_buffer` account instead of this argument to copy from an existing buffer.
+     */
+    data: Option<ReadonlyUint8Array>;
 };
 
 export type WriteInstructionDataArgs = {
-  /** The offset to write to. */
-  offset: number;
-  /**
-   * The data to write at the provided offset.
-   * You may use the `source_buffer` account instead of this argument to copy from an existing buffer.
-   */
-  data?: OptionOrNullable<ReadonlyUint8Array>;
+    /** The offset to write to. */
+    offset: number;
+    /**
+     * The data to write at the provided offset.
+     * You may use the `source_buffer` account instead of this argument to copy from an existing buffer.
+     */
+    data?: OptionOrNullable<ReadonlyUint8Array>;
 };
 
 export function getWriteInstructionDataEncoder(): Encoder<WriteInstructionDataArgs> {
-  return transformEncoder(
-    getStructEncoder([
-      ['discriminator', getU8Encoder()],
-      ['offset', getU32Encoder()],
-      ['data', getOptionEncoder(getBytesEncoder(), { prefix: null })],
-    ]),
-    (value) => ({
-      ...value,
-      discriminator: WRITE_DISCRIMINATOR,
-      data: value.data ?? none(),
-    })
-  );
+    return transformEncoder(
+        getStructEncoder([
+            ['discriminator', getU8Encoder()],
+            ['offset', getU32Encoder()],
+            ['data', getOptionEncoder(getBytesEncoder(), { prefix: null })],
+        ]),
+        value => ({ ...value, discriminator: WRITE_DISCRIMINATOR, data: value.data ?? none() }),
+    );
 }
 
 export function getWriteInstructionDataDecoder(): Decoder<WriteInstructionData> {
-  return getStructDecoder([
-    ['discriminator', getU8Decoder()],
-    ['offset', getU32Decoder()],
-    ['data', getOptionDecoder(getBytesDecoder(), { prefix: null })],
-  ]);
+    return getStructDecoder([
+        ['discriminator', getU8Decoder()],
+        ['offset', getU32Decoder()],
+        ['data', getOptionDecoder(getBytesDecoder(), { prefix: null })],
+    ]);
 }
 
-export function getWriteInstructionDataCodec(): Codec<
-  WriteInstructionDataArgs,
-  WriteInstructionData
-> {
-  return combineCodec(
-    getWriteInstructionDataEncoder(),
-    getWriteInstructionDataDecoder()
-  );
+export function getWriteInstructionDataCodec(): Codec<WriteInstructionDataArgs, WriteInstructionData> {
+    return combineCodec(getWriteInstructionDataEncoder(), getWriteInstructionDataDecoder());
 }
 
 export type WriteInput<
-  TAccountBuffer extends string = string,
-  TAccountAuthority extends string = string,
-  TAccountSourceBuffer extends string = string,
+    TAccountBuffer extends string = string,
+    TAccountAuthority extends string = string,
+    TAccountSourceBuffer extends string = string,
 > = {
-  /** The buffer to write to. */
-  buffer: Address<TAccountBuffer>;
-  /** The authority of the buffer. */
-  authority: TransactionSigner<TAccountAuthority>;
-  /**
-   * Buffer to copy the data from.
-   * You may use the `data` argument instead of this account to pass data directly.
-   */
-  sourceBuffer?: Address<TAccountSourceBuffer>;
-  offset: WriteInstructionDataArgs['offset'];
-  data?: WriteInstructionDataArgs['data'];
-};
-
-export function getWriteInstruction<
-  TAccountBuffer extends string,
-  TAccountAuthority extends string,
-  TAccountSourceBuffer extends string,
-  TProgramAddress extends Address = typeof PROGRAM_METADATA_PROGRAM_ADDRESS,
->(
-  input: WriteInput<TAccountBuffer, TAccountAuthority, TAccountSourceBuffer>,
-  config?: { programAddress?: TProgramAddress }
-): WriteInstruction<
-  TProgramAddress,
-  TAccountBuffer,
-  TAccountAuthority,
-  TAccountSourceBuffer
-> {
-  // Program address.
-  const programAddress =
-    config?.programAddress ?? PROGRAM_METADATA_PROGRAM_ADDRESS;
-
-  // Original accounts.
-  const originalAccounts = {
-    buffer: { value: input.buffer ?? null, isWritable: true },
-    authority: { value: input.authority ?? null, isWritable: false },
-    sourceBuffer: { value: input.sourceBuffer ?? null, isWritable: false },
-  };
-  const accounts = originalAccounts as Record<
-    keyof typeof originalAccounts,
-    ResolvedAccount
-  >;
-
-  // Original args.
-  const args = { ...input };
-
-  const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
-  return Object.freeze({
-    accounts: [
-      getAccountMeta(accounts.buffer),
-      getAccountMeta(accounts.authority),
-      getAccountMeta(accounts.sourceBuffer),
-    ],
-    data: getWriteInstructionDataEncoder().encode(
-      args as WriteInstructionDataArgs
-    ),
-    programAddress,
-  } as WriteInstruction<
-    TProgramAddress,
-    TAccountBuffer,
-    TAccountAuthority,
-    TAccountSourceBuffer
-  >);
-}
-
-export type ParsedWriteInstruction<
-  TProgram extends string = typeof PROGRAM_METADATA_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
-> = {
-  programAddress: Address<TProgram>;
-  accounts: {
     /** The buffer to write to. */
-    buffer: TAccountMetas[0];
+    buffer: Address<TAccountBuffer>;
     /** The authority of the buffer. */
-    authority: TAccountMetas[1];
+    authority: TransactionSigner<TAccountAuthority>;
     /**
      * Buffer to copy the data from.
      * You may use the `data` argument instead of this account to pass data directly.
      */
-    sourceBuffer?: TAccountMetas[2] | undefined;
-  };
-  data: WriteInstructionData;
+    sourceBuffer?: Address<TAccountSourceBuffer>;
+    offset: WriteInstructionDataArgs['offset'];
+    data?: WriteInstructionDataArgs['data'];
 };
 
-export function parseWriteInstruction<
-  TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[],
+export function getWriteInstruction<
+    TAccountBuffer extends string,
+    TAccountAuthority extends string,
+    TAccountSourceBuffer extends string,
+    TProgramAddress extends Address = typeof PROGRAM_METADATA_PROGRAM_ADDRESS,
 >(
-  instruction: Instruction<TProgram> &
-    InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
-): ParsedWriteInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 3) {
-    // TODO: Coded error.
-    throw new Error('Not enough accounts');
-  }
-  let accountIndex = 0;
-  const getNextAccount = () => {
-    const accountMeta = (instruction.accounts as TAccountMetas)[accountIndex]!;
-    accountIndex += 1;
-    return accountMeta;
-  };
-  const getNextOptionalAccount = () => {
-    const accountMeta = getNextAccount();
-    return accountMeta.address === PROGRAM_METADATA_PROGRAM_ADDRESS
-      ? undefined
-      : accountMeta;
-  };
-  return {
-    programAddress: instruction.programAddress,
+    input: WriteInput<TAccountBuffer, TAccountAuthority, TAccountSourceBuffer>,
+    config?: { programAddress?: TProgramAddress },
+): WriteInstruction<TProgramAddress, TAccountBuffer, TAccountAuthority, TAccountSourceBuffer> {
+    // Program address.
+    const programAddress = config?.programAddress ?? PROGRAM_METADATA_PROGRAM_ADDRESS;
+
+    // Original accounts.
+    const originalAccounts = {
+        buffer: { value: input.buffer ?? null, isWritable: true },
+        authority: { value: input.authority ?? null, isWritable: false },
+        sourceBuffer: { value: input.sourceBuffer ?? null, isWritable: false },
+    };
+    const accounts = originalAccounts as Record<keyof typeof originalAccounts, ResolvedAccount>;
+
+    // Original args.
+    const args = { ...input };
+
+    const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
+    return Object.freeze({
+        accounts: [
+            getAccountMeta(accounts.buffer),
+            getAccountMeta(accounts.authority),
+            getAccountMeta(accounts.sourceBuffer),
+        ],
+        data: getWriteInstructionDataEncoder().encode(args as WriteInstructionDataArgs),
+        programAddress,
+    } as WriteInstruction<TProgramAddress, TAccountBuffer, TAccountAuthority, TAccountSourceBuffer>);
+}
+
+export type ParsedWriteInstruction<
+    TProgram extends string = typeof PROGRAM_METADATA_PROGRAM_ADDRESS,
+    TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
+> = {
+    programAddress: Address<TProgram>;
     accounts: {
-      buffer: getNextAccount(),
-      authority: getNextAccount(),
-      sourceBuffer: getNextOptionalAccount(),
-    },
-    data: getWriteInstructionDataDecoder().decode(instruction.data),
-  };
+        /** The buffer to write to. */
+        buffer: TAccountMetas[0];
+        /** The authority of the buffer. */
+        authority: TAccountMetas[1];
+        /**
+         * Buffer to copy the data from.
+         * You may use the `data` argument instead of this account to pass data directly.
+         */
+        sourceBuffer?: TAccountMetas[2] | undefined;
+    };
+    data: WriteInstructionData;
+};
+
+export function parseWriteInstruction<TProgram extends string, TAccountMetas extends readonly AccountMeta[]>(
+    instruction: Instruction<TProgram> &
+        InstructionWithAccounts<TAccountMetas> &
+        InstructionWithData<ReadonlyUint8Array>,
+): ParsedWriteInstruction<TProgram, TAccountMetas> {
+    if (instruction.accounts.length < 3) {
+        // TODO: Coded error.
+        throw new Error('Not enough accounts');
+    }
+    let accountIndex = 0;
+    const getNextAccount = () => {
+        const accountMeta = (instruction.accounts as TAccountMetas)[accountIndex]!;
+        accountIndex += 1;
+        return accountMeta;
+    };
+    const getNextOptionalAccount = () => {
+        const accountMeta = getNextAccount();
+        return accountMeta.address === PROGRAM_METADATA_PROGRAM_ADDRESS ? undefined : accountMeta;
+    };
+    return {
+        programAddress: instruction.programAddress,
+        accounts: { buffer: getNextAccount(), authority: getNextAccount(), sourceBuffer: getNextOptionalAccount() },
+        data: getWriteInstructionDataDecoder().decode(instruction.data),
+    };
 }

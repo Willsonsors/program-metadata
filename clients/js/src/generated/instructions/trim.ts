@@ -7,26 +7,26 @@
  */
 
 import {
-  combineCodec,
-  getStructDecoder,
-  getStructEncoder,
-  getU8Decoder,
-  getU8Encoder,
-  transformEncoder,
-  type AccountMeta,
-  type AccountSignerMeta,
-  type Address,
-  type FixedSizeCodec,
-  type FixedSizeDecoder,
-  type FixedSizeEncoder,
-  type Instruction,
-  type InstructionWithAccounts,
-  type InstructionWithData,
-  type ReadonlyAccount,
-  type ReadonlySignerAccount,
-  type ReadonlyUint8Array,
-  type TransactionSigner,
-  type WritableAccount,
+    combineCodec,
+    getStructDecoder,
+    getStructEncoder,
+    getU8Decoder,
+    getU8Encoder,
+    transformEncoder,
+    type AccountMeta,
+    type AccountSignerMeta,
+    type Address,
+    type FixedSizeCodec,
+    type FixedSizeDecoder,
+    type FixedSizeEncoder,
+    type Instruction,
+    type InstructionWithAccounts,
+    type InstructionWithData,
+    type ReadonlyAccount,
+    type ReadonlySignerAccount,
+    type ReadonlyUint8Array,
+    type TransactionSigner,
+    type WritableAccount,
 } from '@solana/kit';
 import { PROGRAM_METADATA_PROGRAM_ADDRESS } from '../programs';
 import { getAccountMetaFactory, type ResolvedAccount } from '../shared';
@@ -34,157 +34,94 @@ import { getAccountMetaFactory, type ResolvedAccount } from '../shared';
 export const TRIM_DISCRIMINATOR = 5;
 
 export function getTrimDiscriminatorBytes() {
-  return getU8Encoder().encode(TRIM_DISCRIMINATOR);
+    return getU8Encoder().encode(TRIM_DISCRIMINATOR);
 }
 
 export type TrimInstruction<
-  TProgram extends string = typeof PROGRAM_METADATA_PROGRAM_ADDRESS,
-  TAccountAccount extends string | AccountMeta<string> = string,
-  TAccountAuthority extends string | AccountMeta<string> = string,
-  TAccountProgram extends string | AccountMeta<string> = string,
-  TAccountProgramData extends string | AccountMeta<string> = string,
-  TAccountDestination extends string | AccountMeta<string> = string,
-  TAccountRent extends string | AccountMeta<string> =
-    'SysvarRent111111111111111111111111111111111',
-  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
+    TProgram extends string = typeof PROGRAM_METADATA_PROGRAM_ADDRESS,
+    TAccountAccount extends string | AccountMeta<string> = string,
+    TAccountAuthority extends string | AccountMeta<string> = string,
+    TAccountProgram extends string | AccountMeta<string> = string,
+    TAccountProgramData extends string | AccountMeta<string> = string,
+    TAccountDestination extends string | AccountMeta<string> = string,
+    TAccountRent extends string | AccountMeta<string> = 'SysvarRent111111111111111111111111111111111',
+    TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
-  InstructionWithData<ReadonlyUint8Array> &
-  InstructionWithAccounts<
-    [
-      TAccountAccount extends string
-        ? WritableAccount<TAccountAccount>
-        : TAccountAccount,
-      TAccountAuthority extends string
-        ? ReadonlySignerAccount<TAccountAuthority> &
-            AccountSignerMeta<TAccountAuthority>
-        : TAccountAuthority,
-      TAccountProgram extends string
-        ? ReadonlyAccount<TAccountProgram>
-        : TAccountProgram,
-      TAccountProgramData extends string
-        ? ReadonlyAccount<TAccountProgramData>
-        : TAccountProgramData,
-      TAccountDestination extends string
-        ? WritableAccount<TAccountDestination>
-        : TAccountDestination,
-      TAccountRent extends string
-        ? ReadonlyAccount<TAccountRent>
-        : TAccountRent,
-      ...TRemainingAccounts,
-    ]
-  >;
+    InstructionWithData<ReadonlyUint8Array> &
+    InstructionWithAccounts<
+        [
+            TAccountAccount extends string ? WritableAccount<TAccountAccount> : TAccountAccount,
+            TAccountAuthority extends string
+                ? ReadonlySignerAccount<TAccountAuthority> & AccountSignerMeta<TAccountAuthority>
+                : TAccountAuthority,
+            TAccountProgram extends string ? ReadonlyAccount<TAccountProgram> : TAccountProgram,
+            TAccountProgramData extends string ? ReadonlyAccount<TAccountProgramData> : TAccountProgramData,
+            TAccountDestination extends string ? WritableAccount<TAccountDestination> : TAccountDestination,
+            TAccountRent extends string ? ReadonlyAccount<TAccountRent> : TAccountRent,
+            ...TRemainingAccounts,
+        ]
+    >;
 
 export type TrimInstructionData = { discriminator: number };
 
 export type TrimInstructionDataArgs = {};
 
 export function getTrimInstructionDataEncoder(): FixedSizeEncoder<TrimInstructionDataArgs> {
-  return transformEncoder(
-    getStructEncoder([['discriminator', getU8Encoder()]]),
-    (value) => ({ ...value, discriminator: TRIM_DISCRIMINATOR })
-  );
+    return transformEncoder(getStructEncoder([['discriminator', getU8Encoder()]]), value => ({
+        ...value,
+        discriminator: TRIM_DISCRIMINATOR,
+    }));
 }
 
 export function getTrimInstructionDataDecoder(): FixedSizeDecoder<TrimInstructionData> {
-  return getStructDecoder([['discriminator', getU8Decoder()]]);
+    return getStructDecoder([['discriminator', getU8Decoder()]]);
 }
 
-export function getTrimInstructionDataCodec(): FixedSizeCodec<
-  TrimInstructionDataArgs,
-  TrimInstructionData
-> {
-  return combineCodec(
-    getTrimInstructionDataEncoder(),
-    getTrimInstructionDataDecoder()
-  );
+export function getTrimInstructionDataCodec(): FixedSizeCodec<TrimInstructionDataArgs, TrimInstructionData> {
+    return combineCodec(getTrimInstructionDataEncoder(), getTrimInstructionDataDecoder());
 }
 
 export type TrimInput<
-  TAccountAccount extends string = string,
-  TAccountAuthority extends string = string,
-  TAccountProgram extends string = string,
-  TAccountProgramData extends string = string,
-  TAccountDestination extends string = string,
-  TAccountRent extends string = string,
+    TAccountAccount extends string = string,
+    TAccountAuthority extends string = string,
+    TAccountProgram extends string = string,
+    TAccountProgramData extends string = string,
+    TAccountDestination extends string = string,
+    TAccountRent extends string = string,
 > = {
-  /** Buffer or metadata account. */
-  account: Address<TAccountAccount>;
-  /** Authority account. */
-  authority: TransactionSigner<TAccountAuthority>;
-  /** Program account. */
-  program?: Address<TAccountProgram>;
-  /** Program data account. */
-  programData?: Address<TAccountProgramData>;
-  /** Destination account. */
-  destination: Address<TAccountDestination>;
-  /** Rent sysvar account. */
-  rent?: Address<TAccountRent>;
+    /** Buffer or metadata account. */
+    account: Address<TAccountAccount>;
+    /** Authority account. */
+    authority: TransactionSigner<TAccountAuthority>;
+    /** Program account. */
+    program?: Address<TAccountProgram>;
+    /** Program data account. */
+    programData?: Address<TAccountProgramData>;
+    /** Destination account. */
+    destination: Address<TAccountDestination>;
+    /** Rent sysvar account. */
+    rent?: Address<TAccountRent>;
 };
 
 export function getTrimInstruction<
-  TAccountAccount extends string,
-  TAccountAuthority extends string,
-  TAccountProgram extends string,
-  TAccountProgramData extends string,
-  TAccountDestination extends string,
-  TAccountRent extends string,
-  TProgramAddress extends Address = typeof PROGRAM_METADATA_PROGRAM_ADDRESS,
+    TAccountAccount extends string,
+    TAccountAuthority extends string,
+    TAccountProgram extends string,
+    TAccountProgramData extends string,
+    TAccountDestination extends string,
+    TAccountRent extends string,
+    TProgramAddress extends Address = typeof PROGRAM_METADATA_PROGRAM_ADDRESS,
 >(
-  input: TrimInput<
-    TAccountAccount,
-    TAccountAuthority,
-    TAccountProgram,
-    TAccountProgramData,
-    TAccountDestination,
-    TAccountRent
-  >,
-  config?: { programAddress?: TProgramAddress }
+    input: TrimInput<
+        TAccountAccount,
+        TAccountAuthority,
+        TAccountProgram,
+        TAccountProgramData,
+        TAccountDestination,
+        TAccountRent
+    >,
+    config?: { programAddress?: TProgramAddress },
 ): TrimInstruction<
-  TProgramAddress,
-  TAccountAccount,
-  TAccountAuthority,
-  TAccountProgram,
-  TAccountProgramData,
-  TAccountDestination,
-  TAccountRent
-> {
-  // Program address.
-  const programAddress =
-    config?.programAddress ?? PROGRAM_METADATA_PROGRAM_ADDRESS;
-
-  // Original accounts.
-  const originalAccounts = {
-    account: { value: input.account ?? null, isWritable: true },
-    authority: { value: input.authority ?? null, isWritable: false },
-    program: { value: input.program ?? null, isWritable: false },
-    programData: { value: input.programData ?? null, isWritable: false },
-    destination: { value: input.destination ?? null, isWritable: true },
-    rent: { value: input.rent ?? null, isWritable: false },
-  };
-  const accounts = originalAccounts as Record<
-    keyof typeof originalAccounts,
-    ResolvedAccount
-  >;
-
-  // Resolve default values.
-  if (!accounts.rent.value) {
-    accounts.rent.value =
-      'SysvarRent111111111111111111111111111111111' as Address<'SysvarRent111111111111111111111111111111111'>;
-  }
-
-  const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
-  return Object.freeze({
-    accounts: [
-      getAccountMeta(accounts.account),
-      getAccountMeta(accounts.authority),
-      getAccountMeta(accounts.program),
-      getAccountMeta(accounts.programData),
-      getAccountMeta(accounts.destination),
-      getAccountMeta(accounts.rent),
-    ],
-    data: getTrimInstructionDataEncoder().encode({}),
-    programAddress,
-  } as TrimInstruction<
     TProgramAddress,
     TAccountAccount,
     TAccountAuthority,
@@ -192,65 +129,101 @@ export function getTrimInstruction<
     TAccountProgramData,
     TAccountDestination,
     TAccountRent
-  >);
+> {
+    // Program address.
+    const programAddress = config?.programAddress ?? PROGRAM_METADATA_PROGRAM_ADDRESS;
+
+    // Original accounts.
+    const originalAccounts = {
+        account: { value: input.account ?? null, isWritable: true },
+        authority: { value: input.authority ?? null, isWritable: false },
+        program: { value: input.program ?? null, isWritable: false },
+        programData: { value: input.programData ?? null, isWritable: false },
+        destination: { value: input.destination ?? null, isWritable: true },
+        rent: { value: input.rent ?? null, isWritable: false },
+    };
+    const accounts = originalAccounts as Record<keyof typeof originalAccounts, ResolvedAccount>;
+
+    // Resolve default values.
+    if (!accounts.rent.value) {
+        accounts.rent.value =
+            'SysvarRent111111111111111111111111111111111' as Address<'SysvarRent111111111111111111111111111111111'>;
+    }
+
+    const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
+    return Object.freeze({
+        accounts: [
+            getAccountMeta(accounts.account),
+            getAccountMeta(accounts.authority),
+            getAccountMeta(accounts.program),
+            getAccountMeta(accounts.programData),
+            getAccountMeta(accounts.destination),
+            getAccountMeta(accounts.rent),
+        ],
+        data: getTrimInstructionDataEncoder().encode({}),
+        programAddress,
+    } as TrimInstruction<
+        TProgramAddress,
+        TAccountAccount,
+        TAccountAuthority,
+        TAccountProgram,
+        TAccountProgramData,
+        TAccountDestination,
+        TAccountRent
+    >);
 }
 
 export type ParsedTrimInstruction<
-  TProgram extends string = typeof PROGRAM_METADATA_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
+    TProgram extends string = typeof PROGRAM_METADATA_PROGRAM_ADDRESS,
+    TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
-  programAddress: Address<TProgram>;
-  accounts: {
-    /** Buffer or metadata account. */
-    account: TAccountMetas[0];
-    /** Authority account. */
-    authority: TAccountMetas[1];
-    /** Program account. */
-    program?: TAccountMetas[2] | undefined;
-    /** Program data account. */
-    programData?: TAccountMetas[3] | undefined;
-    /** Destination account. */
-    destination: TAccountMetas[4];
-    /** Rent sysvar account. */
-    rent: TAccountMetas[5];
-  };
-  data: TrimInstructionData;
+    programAddress: Address<TProgram>;
+    accounts: {
+        /** Buffer or metadata account. */
+        account: TAccountMetas[0];
+        /** Authority account. */
+        authority: TAccountMetas[1];
+        /** Program account. */
+        program?: TAccountMetas[2] | undefined;
+        /** Program data account. */
+        programData?: TAccountMetas[3] | undefined;
+        /** Destination account. */
+        destination: TAccountMetas[4];
+        /** Rent sysvar account. */
+        rent: TAccountMetas[5];
+    };
+    data: TrimInstructionData;
 };
 
-export function parseTrimInstruction<
-  TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[],
->(
-  instruction: Instruction<TProgram> &
-    InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+export function parseTrimInstruction<TProgram extends string, TAccountMetas extends readonly AccountMeta[]>(
+    instruction: Instruction<TProgram> &
+        InstructionWithAccounts<TAccountMetas> &
+        InstructionWithData<ReadonlyUint8Array>,
 ): ParsedTrimInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 6) {
-    // TODO: Coded error.
-    throw new Error('Not enough accounts');
-  }
-  let accountIndex = 0;
-  const getNextAccount = () => {
-    const accountMeta = (instruction.accounts as TAccountMetas)[accountIndex]!;
-    accountIndex += 1;
-    return accountMeta;
-  };
-  const getNextOptionalAccount = () => {
-    const accountMeta = getNextAccount();
-    return accountMeta.address === PROGRAM_METADATA_PROGRAM_ADDRESS
-      ? undefined
-      : accountMeta;
-  };
-  return {
-    programAddress: instruction.programAddress,
-    accounts: {
-      account: getNextAccount(),
-      authority: getNextAccount(),
-      program: getNextOptionalAccount(),
-      programData: getNextOptionalAccount(),
-      destination: getNextAccount(),
-      rent: getNextAccount(),
-    },
-    data: getTrimInstructionDataDecoder().decode(instruction.data),
-  };
+    if (instruction.accounts.length < 6) {
+        // TODO: Coded error.
+        throw new Error('Not enough accounts');
+    }
+    let accountIndex = 0;
+    const getNextAccount = () => {
+        const accountMeta = (instruction.accounts as TAccountMetas)[accountIndex]!;
+        accountIndex += 1;
+        return accountMeta;
+    };
+    const getNextOptionalAccount = () => {
+        const accountMeta = getNextAccount();
+        return accountMeta.address === PROGRAM_METADATA_PROGRAM_ADDRESS ? undefined : accountMeta;
+    };
+    return {
+        programAddress: instruction.programAddress,
+        accounts: {
+            account: getNextAccount(),
+            authority: getNextAccount(),
+            program: getNextOptionalAccount(),
+            programData: getNextOptionalAccount(),
+            destination: getNextAccount(),
+            rent: getNextAccount(),
+        },
+        data: getTrimInstructionDataDecoder().decode(instruction.data),
+    };
 }

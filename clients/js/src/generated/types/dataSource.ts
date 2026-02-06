@@ -7,33 +7,30 @@
  */
 
 import {
-  combineCodec,
-  getEnumDecoder,
-  getEnumEncoder,
-  type FixedSizeCodec,
-  type FixedSizeDecoder,
-  type FixedSizeEncoder,
+    combineCodec,
+    getEnumDecoder,
+    getEnumEncoder,
+    type FixedSizeCodec,
+    type FixedSizeDecoder,
+    type FixedSizeEncoder,
 } from '@solana/kit';
 
 export enum DataSource {
-  Direct,
-  Url,
-  External,
+    Direct,
+    Url,
+    External,
 }
 
 export type DataSourceArgs = DataSource;
 
 export function getDataSourceEncoder(): FixedSizeEncoder<DataSourceArgs> {
-  return getEnumEncoder(DataSource);
+    return getEnumEncoder(DataSource);
 }
 
 export function getDataSourceDecoder(): FixedSizeDecoder<DataSource> {
-  return getEnumDecoder(DataSource);
+    return getEnumDecoder(DataSource);
 }
 
-export function getDataSourceCodec(): FixedSizeCodec<
-  DataSourceArgs,
-  DataSource
-> {
-  return combineCodec(getDataSourceEncoder(), getDataSourceDecoder());
+export function getDataSourceCodec(): FixedSizeCodec<DataSourceArgs, DataSource> {
+    return combineCodec(getDataSourceEncoder(), getDataSourceDecoder());
 }
